@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "tailors",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

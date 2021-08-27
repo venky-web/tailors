@@ -1,0 +1,7 @@
+{
+  "name": "tailors",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
