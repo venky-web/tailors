@@ -4,79 +4,92 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>Orders</ion-title>
-    <ion-buttons slot="end" *ngIf="isDesktop">
-      <ion-button size="small" (click)="addOrder()">Add Order</ion-button>
+    <ion-buttons slot="end" *ngIf="!isDesktop">
+      <ion-button (click)="addOrder()" slot="icon-only" color="primary">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ng-container *ngIf="!isDesktop">
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button (click)="addOrder()">
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ng-container>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="6" sizeSm="3">
-        <section class="feature-tile" (click)="onClickStatus()">
-          <ion-text class="feature-count text-success">45</ion-text>
-          <ion-text class="feature-name">
-            <ion-thumbnail>
-              <ion-img src="./assets/app-icons/wip.png"></ion-img>
-            </ion-thumbnail>
-            Active
-          </ion-text>
-        </section>
-      </ion-col>
-      <ion-col size="6" sizeSm="3">
-        <section class="feature-tile" (click)="onClickStatus()">
-          <ion-text class="feature-count text-warning">45</ion-text>
-          <ion-text class="feature-name">
-            <ion-thumbnail>
-              <ion-img src="./assets/app-icons/delay.png"></ion-img>
-            </ion-thumbnail>
-            Delayed
-          </ion-text>
-        </section>
-      </ion-col>
-      <ion-col size="6" sizeSm="3">
-        <section class="feature-tile" (click)="onClickStatus()">
-          <ion-text class="feature-count text-primary">45</ion-text>
-          <ion-text class="feature-name">
-            <ion-thumbnail>
-              <ion-img src="./assets/app-icons/checked.png"></ion-img>
-            </ion-thumbnail>
-            Completed
-          </ion-text>
-        </section>
-      </ion-col>
-      <ion-col size="6" sizeSm="3">
-        <section class="feature-tile" (click)="onClickStatus()">
-          <ion-text class="feature-count text-danger">45</ion-text>
-          <ion-text class="feature-name">
-            <ion-thumbnail>
-              <ion-img src="./assets/app-icons/error.png"></ion-img>
-            </ion-thumbnail>
-            Cancelled
-          </ion-text>
-        </section>
-      </ion-col>
-    </ion-row>
-    <ion-list class="employees-list">
+    <div class="search-section">
+      <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+      <div class="filter-section">
+        <ion-button (click)="onFilterOrders()" fill="clear"
+          slot="icon-only">
+          <ion-icon name="filter"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    <ion-list class="order-list">
       <ion-item *ngFor="let order of ordersList" (click)="goToOrderDetails(order.orderId)"
         lines="none" detail button>
         <ion-avatar slot="start">
-          <!-- <img src="./assets/images/man.png" *ngIf="employee.gender === 'male'">
-          <img src="./assets/images/woman.png" *ngIf="employee.gender === 'female'"> -->
+          <img src="./assets/designs/saree-blouse-icon.png">
         </ion-avatar>
         <ion-label>
-          <h3>{{order.customerName}}</h3>
-          <span>{{order.delivaryDate}}</span>
+          <h3 class="customer-name">{{order.customerName}}</h3>
+          <div class="status-section">
+            <span>{{order.status}}</span>
+            <span>{{order.delivaryDate}}</span>
+          </div>
         </ion-label>
       </ion-item>
     </ion-list>
-  </ion-grid>
+  </ng-container>
+  <ng-container *ngIf="isDesktop">
+    <div class="main-content">
+      <div class="left-section">
+        <ion-grid>
+          <ion-row class="border-bottom ion-align-items-center">
+            <ion-col size="3">
+              <h4 class="ion-no-margin">Orders</h4>
+            </ion-col>
+            <ion-col size="6" class="ion-text-center ion-no-padding">
+              <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+            </ion-col>
+            <ion-col size="3" class="ion-text-end">
+              <ion-button (click)="onFilterOrders()" fill="solid">
+                <ion-icon name="add-circle-outline"></ion-icon> 
+                Add Item
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <p-table [columns]="orderTableCols" [value]="ordersList" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th *ngFor="let col of columns">
+                      {{col.header}}
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-car let-columns="columns">
+                  <tr>
+                    <td *ngFor="let col of columns">
+                      {{car[col.field]}}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <div class="right-section overview-section">
+        <div class="header border-bottom">
+          <h4>Overview</h4>
+        </div>
+        <div class="overview-content">
+          <div class="overview-item" *ngFor="let item of overViewData">
+            <span>{{item.orderStatus}}</span>
+            <span>{{item.orderCount}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </ion-content>
