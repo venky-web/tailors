@@ -1,0 +1,37 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>customers</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="9" size-sm>
+                <ion-searchbar></ion-searchbar>
+            </ion-col>
+            <ion-col size="3" size-sm>
+              <ion-button class="icon-only">
+                <ion-icon name="filter-circle-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-list>
+                    <ion-item detail *ngFor="let customer of customers" class="">
+                        <ion-avatar slot="start">
+                            <img [src]="customer?.customerImage">
+                        </ion-avatar>
+                        <ion-label>{{customer.customerName}}</ion-label>
+                        <ion-label>{{customer.mobileNumber}}</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+</ion-content>

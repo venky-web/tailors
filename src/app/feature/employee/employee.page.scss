@@ -1,0 +1,23 @@
+.list-grid {
+    max-width: 75rem;
+
+    .filter-section {
+        display: flex;
+    }
+
+    .btn-section, .filter-section {
+        margin: 0.5rem 0;
+    }
+}
+
+.employees-list {
+    ion-item {
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        margin: 5px 0;
+    }
+
+    :first-child {
+        margin-top: 0;
+    }
+}

@@ -1,0 +1,24 @@
+:root {
+    font-size: 14px;
+    height: 100%;
+}
+
+ion-grid, .page-content {
+    width: auto;
+    max-width: 75rem;
+    margin: 0 auto;
+}
+
+.error-msg {
+    font-size: 0.8rem;
+    color: var(--ion-color-danger);
+}
+
+.form-control.ng-invalid.ng-touched {
+    border: 1px solid var(--ion-color-danger);
+    box-shadow: rgb(210 114 114 / 22%) 0px 1px 12px;
+}
+
+.amount::before {
+    content: "₹ ";
+}

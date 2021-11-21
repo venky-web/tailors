@@ -1,0 +1,8 @@
+:root {
+    --border-color: #dadada;
+}
+
+.b-top { border-top: 1px solid var(--border-color);}
+.b-left { border-left: 1px solid var(--border-color);}
+.b-bottom { border-bottom: 1px solid var(--border-color);}
+.b-right { border-right: 1px solid var(--border-color);}

@@ -1,0 +1,39 @@
+.page-content {
+    position: relative;
+
+    hr {
+        color: #ccc;
+        height: 2px;
+        opacity: 0.5;
+    }
+}
+
+.order-details-section {
+    padding: 0.5rem;
+
+    &.desktop {
+        display: inline-block;
+        width: calc(100% - 10rem);    
+    }
+}
+
+.order-details {
+    color: #6e6e6e;
+    display: grid;
+    grid-template-columns: 10rem 1.5rem auto;
+    font-weight: 600;
+
+    >div {
+        padding: 0.5rem;
+    }
+}
+
+.amount-section {
+    display: inline-block;
+    position: absolute;
+    padding: 1rem;
+}
+
+.amount-section .total-amount {
+    font-size: 1.8rem;
+}

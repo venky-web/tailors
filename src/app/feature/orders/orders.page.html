@@ -1,0 +1,82 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Orders</ion-title>
+    <ion-buttons slot="end" *ngIf="isDesktop">
+      <ion-button size="small" (click)="addOrder()">Add Order</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="!isDesktop">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button (click)="addOrder()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </ng-container>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" sizeSm="3">
+        <section class="feature-tile" (click)="onClickStatus()">
+          <ion-text class="feature-count text-success">45</ion-text>
+          <ion-text class="feature-name">
+            <ion-thumbnail>
+              <ion-img src="./assets/app-icons/wip.png"></ion-img>
+            </ion-thumbnail>
+            Active
+          </ion-text>
+        </section>
+      </ion-col>
+      <ion-col size="6" sizeSm="3">
+        <section class="feature-tile" (click)="onClickStatus()">
+          <ion-text class="feature-count text-warning">45</ion-text>
+          <ion-text class="feature-name">
+            <ion-thumbnail>
+              <ion-img src="./assets/app-icons/delay.png"></ion-img>
+            </ion-thumbnail>
+            Delayed
+          </ion-text>
+        </section>
+      </ion-col>
+      <ion-col size="6" sizeSm="3">
+        <section class="feature-tile" (click)="onClickStatus()">
+          <ion-text class="feature-count text-primary">45</ion-text>
+          <ion-text class="feature-name">
+            <ion-thumbnail>
+              <ion-img src="./assets/app-icons/checked.png"></ion-img>
+            </ion-thumbnail>
+            Completed
+          </ion-text>
+        </section>
+      </ion-col>
+      <ion-col size="6" sizeSm="3">
+        <section class="feature-tile" (click)="onClickStatus()">
+          <ion-text class="feature-count text-danger">45</ion-text>
+          <ion-text class="feature-name">
+            <ion-thumbnail>
+              <ion-img src="./assets/app-icons/error.png"></ion-img>
+            </ion-thumbnail>
+            Cancelled
+          </ion-text>
+        </section>
+      </ion-col>
+    </ion-row>
+    <ion-list class="employees-list">
+      <ion-item *ngFor="let order of ordersList" (click)="goToOrderDetails(order.orderId)"
+        lines="none" detail button>
+        <ion-avatar slot="start">
+          <!-- <img src="./assets/images/man.png" *ngIf="employee.gender === 'male'">
+          <img src="./assets/images/woman.png" *ngIf="employee.gender === 'female'"> -->
+        </ion-avatar>
+        <ion-label>
+          <h3>{{order.customerName}}</h3>
+          <span>{{order.delivaryDate}}</span>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-grid>
+</ion-content>

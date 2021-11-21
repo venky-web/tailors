@@ -1,0 +1,11 @@
+.main-content {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    ion-card {
+        width: 100%;
+        max-width: 350px;
+    }
+}

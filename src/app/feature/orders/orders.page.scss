@@ -1,0 +1,27 @@
+.feature-tile {
+    height: 9rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    row-gap: 0.8rem;
+  
+    .feature-name {
+      font-size: 1.5rem;
+      color: #440404;
+      display: flex;
+    }
+
+    .feature-count {
+        font-size: 2.4rem;
+    }
+  }
+  
+  ion-thumbnail {
+    --size: 2.4rem;
+    margin-right: 0.5rem;
+  }
