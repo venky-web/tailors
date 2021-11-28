@@ -1,78 +1,196 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/orders"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Order : {{orderDetails?.orderId}}</ion-title>
-  </ion-toolbar>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/orders"></ion-back-button>
+		</ion-buttons>
+		<ion-title>Order Details</ion-title>
+		<ion-buttons slot="end" *ngIf="!isDesktop">
+			<ion-button (click)="addItem()" slot="icon-only" color="primary">
+				<ion-icon name="add-circle-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="page-content">
-    <section class="order-details-section" [ngClass]="isDesktop ? 'desktop' : ''">
-      <div class="order-details">
-        <div>Order Id</div>
-        <div>:</div>
-        <div class="order-details-content">{{orderDetails?.orderId}}</div>
-      </div>
-      <div class="order-details">
-        <div>Customer Name</div>
-        <div>:</div>
-        <div class="order-details-content">{{orderDetails?.customerName}}</div>
-      </div>
-      <div class="order-details">
-        <div>Mobile No.</div>
-        <div>:</div>
-        <div class="order-details-content">{{customerDetails?.mobileNumber}}</div>
-      </div>
-      <div class="order-details">
-        <div>Total Items</div>
-        <div>:</div>
-        <div class="order-details-content">
-          {{orderDetails && orderDetails.items ? orderDetails.items.length : '0'}}
-        </div>
-      </div>
-      <div class="order-details" *ngIf="!isDesktop">
-        <div>Total Amount</div>
-        <div>:</div>
-        <div class="order-details-content amount">{{orderDetails?.totalAmount}}</div>
-      </div>
-      <div class="order-details">
-        <div>Comments</div>
-        <div>:</div>
-        <div class="order-details-content">{{orderDetails?.comments}}</div>
-      </div>
-    </section>
-    <section class="amount-section" *ngIf="isDesktop">
-      <div>Total Amount</div>
-      <div class="total-amount amount">{{orderDetails?.totalAmount}}</div>
-    </section>
-    <hr>
-  </div>
-  <!-- <ion-grid>
-    <ion-row>
-      <ion-col class="order-details-section">
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="emp-tab-btns">
-        <ion-label [ngClass]="tabIndex === 1 ? 'selected': ''" (click)="onClickTab('earnings', 1)">Earnings</ion-label>
-        <ion-label [ngClass]="tabIndex === 2 ? 'selected': ''" (click)="onClickTab('compensation', 2)">Compensation</ion-label>
-        <ion-label [ngClass]="tabIndex === 3 ? 'selected': ''" (click)="onClickTab('other', 3)">Other Details</ion-label>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col class="emp-tab-content">
-        <ng-container *ngIf="tabIndex === 1">
-          Earnings
-        </ng-container>
-        <ng-container *ngIf="tabIndex === 2">
-          compensation
-        </ng-container>
-        <ng-container *ngIf="tabIndex === 3">
-          other
-        </ng-container>
-      </ion-col>
-    </ion-row>
-  </ion-grid> -->
+	<ng-container *ngIf="!isDesktop">
+		<section class="order-details-section border-bottom" [ngClass]="isDesktop ? 'desktop' : ''">
+			<div class="order-details">
+				<div>Order Id</div>
+				<div>:</div>
+				<div class="order-details-content">{{orderDetails?.orderId}}</div>
+			</div>
+			<div class="order-details">
+				<div>Customer Name</div>
+				<div>:</div>
+				<div class="order-details-content">{{orderDetails?.customerName}}</div>
+			</div>
+			<div class="order-details">
+				<div>Mobile No.</div>
+				<div>:</div>
+				<div class="order-details-content">{{customerDetails?.mobileNumber}}</div>
+			</div>
+			<div class="order-details">
+				<div>Total Items</div>
+				<div>:</div>
+				<div class="order-details-content">
+					{{orderDetails && orderDetails.items ? orderDetails.items.length : '0'}}
+				</div>
+			</div>
+			<div class="order-details" *ngIf="!isDesktop">
+				<div>Total Amount</div>
+				<div>:</div>
+				<div class="order-details-content amount">{{orderDetails?.totalAmount}}</div>
+			</div>
+			<div class="order-details">
+				<div>Comments</div>
+				<div>:</div>
+				<div class="order-details-content">{{orderDetails?.comments}}</div>
+			</div>
+		</section>
+		<section class="bill-items-list mobile">
+			<ion-card button *ngFor="let item of orderItemsList"
+				(click)="presentActionSheet(item)">
+				<ion-card-content>
+					<ion-avatar slot="start" class="ion-text-center">
+						<img src="./assets/images/woman.png" />
+						<ion-note>{{item?.type | titlecase}}</ion-note>
+					</ion-avatar>
+					<ion-note>
+						<div class="bill-item-info">
+							<span>Delivery Date</span>
+							<span>:</span>
+							<span>{{item?.deliveryDate}}</span>
+						</div>
+						<div class="bill-item-info">
+							<span>Quantity</span>
+							<span>:</span>
+							<span>{{item?.quantity}}</span>
+						</div>
+						<div class="bill-item-info">
+							<span>Amount</span>
+							<span>:</span>
+							<span>{{item?.itemPrice | currency:"INR"}}</span>
+						</div>
+						<div class="bill-item-info">
+							<span>Status</span>
+							<span>:</span>
+							<span>{{item?.status | titlecase}}</span>
+						</div>
+						<div class="bill-item-info">
+							<span>Comments</span>
+							<span>:</span>
+							<span>{{item?.comments}}</span>
+						</div>
+					</ion-note>
+				</ion-card-content>
+			</ion-card>
+		</section>
+	</ng-container>
+	<ng-container *ngIf="isDesktop">
+		<div class="main-content">
+			<div class="left-section">
+				<ion-grid>
+					<ion-row class="border-bottom ion-align-items-center">
+						<ion-col size="6">
+							<h4 class="ion-no-margin">Orders</h4>
+						</ion-col>
+						<ion-col size="6" class="ion-text-end">
+							<ion-button (click)="addItem()" fill="solid">
+								<ion-icon name="add-circle-outline"></ion-icon> 
+								Add Item
+							</ion-button>
+						</ion-col>
+					</ion-row>
+				<ion-row class="border-bottom">
+					<ion-col size="12">
+						<section class="order-details-section">
+							<div class="order-details">
+								<div>Order Id</div>
+								<div>:</div>
+								<div class="order-details-content">{{orderDetails?.orderId}}</div>
+							</div>
+							<div class="order-details">
+								<div>Customer Name</div>
+								<div>:</div>
+								<div class="order-details-content">{{orderDetails?.customerName}}</div>
+							</div>
+							<div class="order-details">
+								<div>Mobile No.</div>
+								<div>:</div>
+								<div class="order-details-content">{{customerDetails?.mobileNumber}}</div>
+							</div>
+							<div class="order-details">
+								<div>Total Items</div>
+								<div>:</div>
+								<div class="order-details-content">
+									{{orderDetails && orderDetails.items ? orderDetails.items.length : '0'}}
+								</div>
+							</div>
+							<div class="order-details" *ngIf="!isDesktop">
+								<div>Total Amount</div>
+								<div>:</div>
+								<div class="order-details-content amount">{{orderDetails?.totalAmount}}</div>
+							</div>
+							<div class="order-details">
+								<div>Comments</div>
+								<div>:</div>
+								<div class="order-details-content">{{orderDetails?.comments}}</div>
+							</div>
+						</section>
+					</ion-col>
+				</ion-row>
+				<ion-row>
+					<ion-col size="12">
+						<p-table [columns]="orderItemsCols" [value]="orderItemsList" [paginator]="true"
+							[rows]="10">
+							<ng-template pTemplate="header" let-columns>
+								<tr>
+									<th *ngFor="let col of columns">
+									{{col.header}}
+									</th>
+								</tr>
+							</ng-template>
+							<ng-template pTemplate="body" let-data let-columns="columns">
+								<tr>
+									<td>{{data.type | titlecase}}</td>
+									<td>{{data.comments}}</td>
+									<td>{{data.deliveryDate}}</td>
+									<td>{{data.itemPrice | currency:"INR"}}</td>
+									<td>{{data.quantity}}</td>
+									<td>
+										<ion-button (click)="onEditOrderItem(data)"
+											slot="icon-only" fill="clear" color="medium">
+											<ion-icon name="create"></ion-icon>
+										</ion-button>
+										<ion-button (click)="presentAlertConfirm(data.itemId)" fill="clear"
+											slot="icon-only" color="danger">
+											<ion-icon name="trash"></ion-icon>
+										</ion-button>
+									</td>
+								</tr>
+							</ng-template>
+						</p-table>
+					</ion-col>
+				</ion-row>
+				</ion-grid>
+			</div>
+			<div class="right-section">
+				<div class="header border-bottom">
+					<h4>Bill Details</h4>
+				</div>
+				<div class="bill-items-list border-bottom">
+					<div class="bill-item" *ngFor="let item of orderItemsList">
+						<span class="bill-item-type">{{item.type | titlecase}}</span>
+						<span class="bill-item-qty">{{item.quantity}}</span>
+						<span class="bill-item-price">{{+item.quantity * +item.itemPrice | currency: "INR"}}</span>
+					</div>
+				</div>
+				<div class="bill-amount-section">
+					<span>Total Amount</span>
+					<span>{{orderDetails?.totalAmount | currency:"INR"}}</span>
+				</div>
+			</div>
+		</div>
+	</ng-container>
 </ion-content>

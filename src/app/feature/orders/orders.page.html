@@ -1,95 +1,107 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Orders</ion-title>
-    <ion-buttons slot="end" *ngIf="!isDesktop">
-      <ion-button (click)="addOrder()" slot="icon-only" color="primary">
-        <ion-icon name="add-circle-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="home"></ion-back-button>
+		</ion-buttons>
+		<ion-title>Orders</ion-title>
+		<ion-buttons slot="end" *ngIf="!isDesktop">
+			<ion-button (click)="addOrderItem()" slot="icon-only" color="primary">
+				<ion-icon name="add-circle-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ng-container *ngIf="!isDesktop">
-    <div class="search-section">
-      <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
-      <div class="filter-section">
-        <ion-button (click)="onFilterOrders()" fill="clear"
-          slot="icon-only">
-          <ion-icon name="filter"></ion-icon>
-        </ion-button>
-      </div>
-    </div>
-    <ion-list class="order-list">
-      <ion-item *ngFor="let order of ordersList" (click)="goToOrderDetails(order.orderId)"
-        lines="none" detail button>
-        <ion-avatar slot="start">
-          <img src="./assets/designs/saree-blouse-icon.png">
-        </ion-avatar>
-        <ion-label>
-          <h3 class="customer-name">{{order.customerName}}</h3>
-          <div class="status-section">
-            <span>{{order.status}}</span>
-            <span>{{order.delivaryDate}}</span>
-          </div>
-        </ion-label>
-      </ion-item>
-    </ion-list>
-  </ng-container>
-  <ng-container *ngIf="isDesktop">
-    <div class="main-content">
-      <div class="left-section">
-        <ion-grid>
-          <ion-row class="border-bottom ion-align-items-center">
-            <ion-col size="3">
-              <h4 class="ion-no-margin">Orders</h4>
-            </ion-col>
-            <ion-col size="6" class="ion-text-center ion-no-padding">
-              <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
-            </ion-col>
-            <ion-col size="3" class="ion-text-end">
-              <ion-button (click)="onFilterOrders()" fill="solid">
-                <ion-icon name="add-circle-outline"></ion-icon> 
-                Add Item
-              </ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12">
-              <p-table [columns]="orderTableCols" [value]="ordersList" [paginator]="true" [rows]="10">
-                <ng-template pTemplate="header" let-columns>
-                  <tr>
-                    <th *ngFor="let col of columns">
-                      {{col.header}}
-                    </th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-car let-columns="columns">
-                  <tr>
-                    <td *ngFor="let col of columns">
-                      {{car[col.field]}}
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-      <div class="right-section overview-section">
-        <div class="header border-bottom">
-          <h4>Overview</h4>
-        </div>
-        <div class="overview-content">
-          <div class="overview-item" *ngFor="let item of overViewData">
-            <span>{{item.orderStatus}}</span>
-            <span>{{item.orderCount}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-container>
+	<ng-container *ngIf="!isDesktop">
+		<div class="search-section">
+			<ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+			<div class="filter-section">
+				<ion-button (click)="onFilterOrders()" fill="clear"
+				slot="icon-only">
+				<ion-icon name="filter"></ion-icon>
+				</ion-button>
+			</div>
+		</div>
+		<ion-list class="order-list">
+			<ion-item *ngFor="let order of ordersList" (click)="goToOrderDetails(order.orderId)"
+				lines="none" detail button>
+				<ion-avatar slot="start">
+					<img src="./assets/designs/saree-blouse-icon.png">
+				</ion-avatar>
+				<ion-label>
+					<h3 class="customer-name">{{order.customerName}}</h3>
+					<div class="status-section">
+						<span>{{order.status}}</span>
+						<span>{{order.deliveryDate}}</span>
+					</div>
+				</ion-label>
+			</ion-item>
+		</ion-list>
+	</ng-container>
+	<ng-container *ngIf="isDesktop">
+		<div class="main-content">
+			<div class="left-section">
+				<ion-grid>
+					<ion-row class="border-bottom ion-align-items-center">
+						<ion-col size="3">
+							<h4 class="ion-no-margin">Orders</h4>
+						</ion-col>
+						<ion-col size="6" class="ion-text-center ion-no-padding">
+							<ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+						</ion-col>
+						<ion-col size="3" class="ion-text-end">
+							<ion-button (click)="addOrderItem()" fill="solid">
+								<ion-icon name="add-circle-outline"></ion-icon> 
+								Add Item
+							</ion-button>
+						</ion-col>
+					</ion-row>
+					<ion-row>
+						<ion-col size="12">
+							<p-table [columns]="orderTableCols" [value]="ordersList"
+								[paginator]="true" [rows]="10">
+								<ng-template pTemplate="header" let-columns>
+									<tr>
+										<th *ngFor="let col of columns">
+											{{col.header}}
+										</th>
+									</tr>
+								</ng-template>
+								<ng-template pTemplate="body" let-data let-columns="columns">
+									<tr>
+										<td>
+											<span class="customer-name" (click)="goToOrderDetails(data.orderId)">
+												<ng-container *ngIf="data?.customerName">
+													{{data.customerName | titlecase}}
+												</ng-container>
+												<ng-container *ngIf="!data.customerName">
+													{{data.orderId}}
+												</ng-container>
+											</span>
+										</td>
+										<td>{{data.status | titlecase}}</td>
+										<td>{{data.deliveryDate}}</td>
+										<td>{{data.totalAmount | currency:"INR"}}</td>
+										<td>{{data.items.length}}</td>
+									</tr>
+								</ng-template>
+							</p-table>
+						</ion-col>
+					</ion-row>
+				</ion-grid>
+			</div>
+			<div class="right-section overview-section">
+				<div class="header border-bottom">
+					<h4>Overview</h4>
+				</div>
+				<div class="overview-content">
+					<div class="overview-item" *ngFor="let item of overViewData">
+						<span>{{item.orderStatus}}</span>
+						<span>{{item.orderCount}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ng-container>
 </ion-content>

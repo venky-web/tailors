@@ -2,7 +2,7 @@ export interface IEmployee {
     name?: string;
     employeeId?: string | number;
     maritalStatus?: string;
-    gender?: 'male' | 'female';
+    gender?: string;
     status?: string;
     joinedDate?: Date | string;
     exitDate?: Date | string;
@@ -18,6 +18,7 @@ export interface IAddress {
     city?: string;
     state?: string;
     zipcode?: number | string;
+    isDefault?: boolean;
 }
 
 export interface ICompensation {

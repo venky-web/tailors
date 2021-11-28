@@ -2,6 +2,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject } from "rxjs";
+import { map, take, tap } from 'rxjs/operators';
 
 import { environment } from "src/environments/environment";
 import { Order } from "app-models";
@@ -12,47 +13,8 @@ import { Order } from "app-models";
 })
 export class OrderService {
 
-    orders: Order[] = [
-        {
-            orderId: "1",
-            customerId: "c1",
-            delivaryDate: "20-11-2021",
-            customerName: "abc",
-            totalAmount: 500,
-            items: [
-                {
-                    type: "blouse",
-                    itemPrice: 150,
-                    quantity: 2,
-                    status: "completed"
-                },
-                {
-                    type: "gown",
-                    itemPrice: 550,
-                    quantity: 1,
-                    status: "Work in progress"
-                },
-            ],
-            status: "active",
-        },
-        {
-            orderId: "2",
-            customerId: "c2",
-            delivaryDate: "23-11-2021 05:30:00 PM",
-            customerName: "def",
-            totalAmount: 1200,
-            items: [
-                {
-                    type: "blouse",
-                    itemPrice: 150,
-                    quantity: 2,
-                    status: "completed"
-                },
-            ],
-            status: "active",
-        },
-    ];
     envKeys: any;
+    orders: Order[] = [];
 
     private orderListSubject: BehaviorSubject<Order[]> = new BehaviorSubject([]);
 
@@ -68,20 +30,61 @@ export class OrderService {
     }
 
     updateOrdersList(orders: Order[]) {
+        this.orders = orders;
         this.orderListSubject.next(orders);
     }
 
-    getOrdersList() {}
+    getOrders() {
+        return this.http.get<{[key: string]: Order}>(`${this.envKeys.fireBaseAPI}orders.json`).pipe(
+            map(resData => {
+                console.log(resData);
+                const orders = [] as Order[];
+                for (const key in resData) {
+                    if (resData.hasOwnProperty(key)) {
+                        const order: Order = {
+                            orderId: key,
+                            createdDate: resData[key].createdDate,
+                            updatedDate: resData[key].updatedDate,
+                            deliveryDate: resData[key].deliveryDate,
+                            isOneTimeDelivery: resData[key].isOneTimeDelivery,
+                            customerId: resData[key].customerId,
+                            customerName: resData[key].customerName,
+                            totalAmount: resData[key].totalAmount,
+                            items: resData[key].items,
+                            status: resData[key].status,
+                            comments: resData[key].comments,
+                        };
+                        orders.push(order);
+                    }
+                }
+                return orders;
+            }),
+            tap(orders => {
+                this.updateOrdersList(orders);
+            })
+        );
+    }
 
     getOrderDetails(orderId: string) {
-        return this.orders.find((o: Order) => o.orderId === orderId);
+        return this.http.get(`${this.envKeys.fireBaseAPI}orders/${orderId}.json`)
+		.pipe(
+			take(1)
+		);
     }
 
     addOrder(newOrder: Order) {
-        return this.http.post(`${this.envKeys.fireBaseAPI}orders.json`, newOrder);
+        return this.http.post<{name: string}>(`${this.envKeys.fireBaseAPI}orders.json`, newOrder)
+        .pipe(
+            take(1),
+        );
     }
 
-    updateOrderDetails() {}
+    updateOrder(order: Order, orderId: string) {
+        return this.http.put(`${this.envKeys.fireBaseAPI}orders/${orderId}.json`, order)
+        .pipe(
+            take(1),
+        );
+    }
 
     deleteOrder() {}
 

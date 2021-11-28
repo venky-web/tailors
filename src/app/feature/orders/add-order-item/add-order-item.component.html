@@ -1,3 +1,121 @@
-<p>
-  add-order-item works!
-</p>
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Add Order Item</ion-title>
+		<ion-buttons slot="primary">
+			<ion-button color="danger" (click)="onCancel()">
+				<ion-icon slot="icon-only" name="close-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<form [formGroup]="orderItemForm">
+		<ion-list lines="full">
+			<ion-item lines="full">
+				<ion-label position="floating">Type</ion-label>
+				<ion-select name="type" formControlName="type" placeholder="Select Type">
+					<ion-select-option *ngFor="let type of itemTypes" [value]="type">
+						{{type | titlecase}}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.type.errors && (formCtrls.type.touched || formCtrls.type.dirty)">
+				<ng-template
+					*ngIf="formCtrls.type.errors.required"	
+					[ngTemplateOutlet]="fieldRequriedText">
+				</ng-template>
+			</ng-container>
+			<ion-item lines="full">
+				<ion-label position="floating">Quantity</ion-label>
+				<ion-input clearInput type="number" name="quantity" formControlName="quantity" 
+					placeholder="Enter quantity">
+				</ion-input>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.quantity.errors && (formCtrls.quantity.touched || formCtrls.quantity.dirty)">
+				<ng-template 
+					*ngIf="formCtrls.quantity.errors.required"
+					[ngTemplateOutlet]="fieldRequriedText">
+				</ng-template>
+				<div class="error-msg" *ngIf="formCtrls.quantity.errors.min">
+					Must be 1 or mores
+				</div>
+				<div class="error-msg" *ngIf="formCtrls.quantity.errors.max">
+					Cannot be more than 500
+				</div>
+			</ng-container>
+			<ion-item lines="full">
+				<ion-label position="floating">Price per piece/service</ion-label>
+				<ion-input clearInput type="number" name="itemPrice" formControlName="itemPrice" 
+					placeholder="Enter price">
+				</ion-input>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.itemPrice.errors && (formCtrls.itemPrice.touched || formCtrls.itemPrice.dirty)">
+				<ng-template
+					*ngIf="formCtrls.itemPrice.errors.required"
+					[ngTemplateOutlet]="fieldRequriedText">
+				</ng-template>
+				<div class="error-msg" *ngIf="formCtrls.itemPrice.errors.min">
+					Must be 0 or mores
+				</div>
+			</ng-container>
+			<ion-item lines="full">
+				<ion-label position="floating">Status</ion-label>
+				<ion-select name="status" formControlName="status" placeholder="Select status">
+					<ion-select-option *ngFor="let status of statusList" [value]="status">
+						{{status | titlecase}}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.status.errors && (formCtrls.status.touched || formCtrls.status.dirty)">
+				<ng-template
+					[ngTemplateOutlet]="fieldRequriedText"
+					*ngIf="formCtrls.status.errors.required">
+				</ng-template>
+			</ng-container>
+			<ion-item lines="full">
+				<ion-label position="floating">Delivery Date</ion-label>
+				<ion-datetime displayFormat="YYYY-MM-DD hh:mm a" name="deliveryDate" formControlName="deliveryDate"
+					placeholder="Select Date" [min]="minDeliveryDate" [max]="maxDeliveryDate">
+				</ion-datetime>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.deliveryDate.errors && (formCtrls.deliveryDate.touched || formCtrls.deliveryDate.dirty)">
+				<ng-template
+					[ngTemplateOutlet]="fieldRequriedText"
+					*ngIf="formCtrls.deliveryDate.errors.required">
+				</ng-template>
+			</ng-container>
+			<ion-item>
+				<ion-label position="floating">Notes</ion-label>
+				<ion-textarea rows="6" placeholder="Enter any notes here..."
+					name="comments" formControlName="comments">
+				</ion-textarea>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.comments.errors && (formCtrls.comments.touched || formCtrls.comments.dirty)">
+				<div class="error-msg" *ngIf="formCtrls.comments.errors.maxLength">
+					Cannot be more than 500 characters
+				</div>
+			</ng-container>
+		</ion-list>
+	</form>
+</ion-content>
+
+<ion-footer>
+	<ion-toolbar class="p-2">
+		<ion-buttons slot="start" class="ml-3">
+			<ion-button type="button" color="danger" fill="clear" (click)="onCancel()">
+				<ion-icon name="close-outline"></ion-icon>
+				Cancel
+			</ion-button>
+		</ion-buttons>
+		<ion-buttons slot="primary">
+			<ion-button type="submit" color="success" fill="solid" (click)="onSubmit()">
+				Save
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-footer>
+
+<ng-template #fieldRequriedText>
+  	<div class="error-msg">This field is required</div>
+</ng-template>

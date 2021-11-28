@@ -1,7 +1,8 @@
 :root {
-    font-size: 14px;
+    font-size: 13px;
     height: 100%;
     --text-black: #444444;
+    color: var(--text-black);
 }
 
 ion-grid, .page-content {
@@ -22,4 +23,8 @@ ion-grid, .page-content {
 
 .amount::before {
     content: "₹ ";
+}
+
+.alert-button-role-destructive {
+    color: var(--ion-color-danger) !important;
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { TableModule } from 'primeng/table';
 
 import { OrderDetailPageRoutingModule } from './order-detail-routing.module';
 
@@ -13,7 +14,8 @@ import { OrderDetailPage } from './order-detail.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    OrderDetailPageRoutingModule
+    OrderDetailPageRoutingModule,
+    TableModule,
   ],
   declarations: [OrderDetailPage]
 })

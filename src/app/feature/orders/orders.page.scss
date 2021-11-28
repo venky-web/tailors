@@ -1,26 +1,3 @@
-.feature-tile {
-	height: 9rem;
-	border-radius: 12px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	margin: 5px;
-	cursor: pointer;
-	border: 2px solid #ccc;
-	row-gap: 0.8rem;
-
-	.feature-name {
-		font-size: 1.5rem;
-		color: #440404;
-		display: flex;
-	}
-
-	.feature-count {
-		font-size: 2.4rem;
-	}
-}
-
 ion-icon[name="add-circle-outline"] {
 	font-size: 2rem;
 }
@@ -81,6 +58,15 @@ ion-thumbnail {
 		border: 1px solid var(--border-color);
 	}
 
+	.left-section {
+
+		.customer-name {
+			font-weight: 600;
+			color: var(--ion-color-primary);
+			cursor: pointer;
+		}
+	}
+
 	.overview-section {
 		padding: 5px;
 		color: var(--text-black);
@@ -93,7 +79,7 @@ ion-thumbnail {
 			padding: 1rem 0.5rem;
 
 			.overview-item {
-				font-size: 1.2rem;
+				font-size: 1rem;
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
