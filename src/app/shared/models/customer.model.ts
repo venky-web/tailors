@@ -1,7 +1,13 @@
-export interface CustomerModel {
+import { IAddress } from './employee.model';
+
+export interface Customer {
   id?: string;
-  customerName?: string;
+  name?: string;
   mobileNumber?: number | string;
-  isActive?: boolean;
+  status?: string;
   customerImage?: string;
+  gender?: string;
+  address?: IAddress[];
+  createdDate?: Date | string;
+  updatedDate?: Date | string;
 }

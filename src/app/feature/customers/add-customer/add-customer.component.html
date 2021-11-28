@@ -1,0 +1,84 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Add Customer</ion-title>
+		<ion-buttons slot="primary">
+			<ion-button color="danger" (click)="onCancel()">
+				<ion-icon slot="icon-only" name="close-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<form [formGroup]="customerForm">
+		<ion-list lines="full">
+			<ion-item>
+				<ion-label position="floating">Name</ion-label>
+				<ion-input clearInput name="name" formControlName="name" 
+					placeholder="Enter customer name">
+				</ion-input>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.name.errors && (formCtrls.name.touched || formCtrls.name.dirty)">
+				<ng-template
+					*ngIf="formCtrls.name.errors.required"	
+					[ngTemplateOutlet]="fieldRequriedText">
+				</ng-template>
+				<div class="error-msg" *ngIf="formCtrls.name.errors.minlength">
+					Minimum 3 characters is required
+				</div>
+			</ng-container>
+			<ion-item>
+				<ion-label position="floating">Mobile Number</ion-label>
+				<ion-input clearInput type="number" name="mobileNumber" formControlName="mobileNumber" 
+					placeholder="Enter mobile number">
+				</ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label position="floating">Gender</ion-label>
+				<ion-select name="gender" formControlName="gender" placeholder="Select gender">
+					<ion-select-option value="male">Male</ion-select-option>
+					<ion-select-option value="female">Female</ion-select-option>
+				</ion-select>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.gender.errors && (formCtrls.gender.touched || formCtrls.gender.dirty)">
+				<ng-template
+					[ngTemplateOutlet]="fieldRequriedText"
+					*ngIf="formCtrls.gender.errors.required">
+				</ng-template>
+			</ng-container>
+			<ion-item>
+				<ion-label position="floating">Status</ion-label>
+				<ion-select name="status" formControlName="status" placeholder="Select status">
+					<ion-select-option value="active">Active</ion-select-option>
+					<ion-select-option value="inactive">Inactive</ion-select-option>
+				</ion-select>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.status.errors && (formCtrls.status.touched || formCtrls.status.dirty)">
+				<ng-template
+					[ngTemplateOutlet]="fieldRequriedText"
+					*ngIf="formCtrls.status.errors.required">
+				</ng-template>
+			</ng-container>
+		</ion-list>
+	</form>
+</ion-content>
+
+<ion-footer>
+	<ion-toolbar class="p-2">
+		<ion-buttons slot="start" class="ml-3">
+			<ion-button type="button" color="danger" fill="clear" (click)="onCancel()">
+				<ion-icon name="close-outline"></ion-icon>
+				Cancel
+			</ion-button>
+		</ion-buttons>
+		<ion-buttons slot="primary">
+			<ion-button type="submit" color="success" fill="solid" (click)="onSubmit()">
+				Save
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-footer>
+
+<ng-template #fieldRequriedText>
+  	<div class="error-msg">This field is required</div>
+</ng-template>

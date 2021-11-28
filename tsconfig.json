@@ -16,6 +16,7 @@
     "paths": {
       "app-services": ["src/app/shared/services"],
       "app-models": ["src/app/shared/models"],
+      "app-shared": ["src/app/shared"],
     }
   },
   "angularCompilerOptions": {
