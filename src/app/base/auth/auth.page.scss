@@ -1,8 +1,15 @@
 .main-content {
     height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    row-gap: 1rem;
     align-items: center;
+    padding-top: 2rem;
+
+    ion-avatar {
+        width: 128px;
+        height: 128px;
+    }
 
     ion-card {
         width: 100%;

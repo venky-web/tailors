@@ -1,56 +1,224 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AlertController, LoadingController, Platform } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 import { AuthService } from 'app-services';
+import { AppUtils } from 'app-shared';
 
 @Component({
-  selector: 'app-auth',
-  templateUrl: './auth.page.html',
-  styleUrls: ['./auth.page.scss'],
+	selector: 'app-auth',
+	templateUrl: './auth.page.html',
+	styleUrls: ['./auth.page.scss'],
 })
-export class AuthPage implements OnInit {
+export class AuthPage implements OnInit, OnDestroy {
 
-  authForm: FormGroup;
+	authForm: FormGroup;
+	subscriptions: Subscription[];
+	appUtils: any;
 
-  isLogin: boolean;
+	isLogin: boolean;
+	platforms: string[];
+	isDesktop: boolean;
 
-  constructor(
-    private authService: AuthService,
-  ) {
-    this.isLogin = true;
-  }
+	constructor(
+		private authService: AuthService,
+		private router: Router,
+		private platform: Platform,
+		private loadingController: LoadingController,
+		private alertController: AlertController,
+	) {
+		this.isLogin = true;
+		this.platforms = this.platform.platforms();
+		this.isDesktop = this.platforms.includes('desktop');
+        this.subscriptions = [];
+		this.appUtils = AppUtils;
+	}
 
-  ngOnInit() {
-    this.authForm = new FormGroup({
-      email: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.email]}),
-      password: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(6)]})
-    });
-  }
+	ngOnInit() {
+		this.authForm = new FormGroup({
+			email: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.email]}),
+			password: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(6)]})
+		});
+	}
 
-  get formCtrls() { return this.authForm.controls; }
+	ngOnDestroy() {
+		if (this.subscriptions) {
+			this.subscriptions.forEach((s: Subscription) => s.unsubscribe());
+		}
+	}
 
-  onSubmit() {
-    this.authForm.markAllAsTouched();
-    this.authForm.markAsDirty();
-    console.log(this.authForm);
-    if (!this.isLogin) {
-      const passwordsMatch = this.authForm.value.password === this.authForm.value.password2;
-      if (!passwordsMatch) {
-        this.authForm.controls.password.setErrors({misMatch: true});
-        this.authForm.controls.password2.setErrors({misMatch: true});
-      }
-    }
-    if (!this.authForm.valid) { return; }
-  }
+	ionViewDidLeave() {
+		this.authForm.reset();
+		this.isLogin = true;
+		this.ngOnDestroy();
+	}
 
-  signUp() {
-    if (this.isLogin) {
-      this.authForm.addControl('password2', new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}));
-    } else {
-      this.authForm.removeControl('password2');
-    }
-    this.authForm.reset();
-    this.isLogin = !this.isLogin;
-  }
+	get formCtrls() { return this.authForm.controls; }
+
+	changeForm() {
+		this.authForm.reset();
+		if (this.isLogin) {
+			this.authForm.addControl('password2', new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}));
+			this.authForm.addControl(
+				'username',
+				new FormControl(null, {updateOn: 'blur', validators: [Validators.minLength(3), Validators.maxLength(100)]})
+			);
+		} else {
+			this.authForm.removeControl('password2');
+			this.authForm.removeControl('username');
+		}
+		this.isLogin = !this.isLogin;
+	}
+
+	onSubmit() {
+		this.authForm.setErrors(null);
+		this.authForm.markAllAsTouched();
+		this.authForm.markAsDirty();
+		if (!this.authForm.valid) { return; }
+		const formData = this.appUtils.getTrimmedObj(this.authForm.value);
+		if (!this.isLogin) {
+			const passwordsMatch = formData.password === formData.password2;
+			if (!passwordsMatch) {
+				this.authForm.setErrors({misMatch: true});
+				return;
+			}
+		}
+		if (this.isLogin) {
+			this.onLogin(formData);
+		} else {
+			this.signUp(formData);
+		}
+	}
+
+	signUp(formData: any) {
+		this.loadingController.create({
+			message: 'Signing up...',
+			showBackdrop: true,
+			animated: true,
+			backdropDismiss: false,
+			keyboardClose: false,
+			id: 'sign-up-spinner'
+		}).then((loadingEl: HTMLIonLoadingElement) => {
+			loadingEl.present();
+			const signUpSub = this.authService.signUp(formData.email, formData.password).subscribe(
+				(response: any) => {
+					const payload = {
+						idToken: response.idToken,
+						displayName: formData.username,
+						photoUrl: null,
+						returnSecureToken: true
+					};
+					this.updateUserProfile(payload, response.refreshToken, response.expiresIn);
+				},
+				errorRes => {
+					loadingEl.dismiss();
+					this.showErrorAlert(errorRes);
+				}
+			);
+			this.subscriptions.push(signUpSub);
+		});
+	}
+
+	onLogin(formData: any) {
+		this.loadingController.create({
+			message: 'Logging in...',
+			showBackdrop: true,
+			animated: true,
+			backdropDismiss: false,
+			keyboardClose: false,
+			id: 'login-spinner'
+		}).then((loadingEl: HTMLIonLoadingElement) => {
+			loadingEl.present();
+			const loginSub = this.authService.login(formData.email, formData.password).subscribe(
+				(response: any) => {
+					this.getUserData(response.idToken, response.refreshToken, response.expiresIn);
+				},
+				errorRes => {
+					loadingEl.dismiss();
+					this.showErrorAlert(errorRes);
+				}
+			);
+			this.subscriptions.push(loginSub);
+		});
+	}
+
+	getUserData(idToken: string, refreshToken?: string, expiresIn?: string) {
+		const getUserDataSub = this.authService.getUserProfile(idToken).subscribe(
+			(response: any) => {
+				const userData = response.users[0];
+				this.authService.setUser({
+					...userData,
+					idToken,
+					photoUrl: null,
+					refreshToken,
+					expiresIn,
+				});
+				this.loadingController.dismiss(null, null, 'login-spinner');
+				this.navigateToHomePage();
+			},
+			errorRes => {
+				this.loadingController.dismiss(null, null, 'login-spinner');
+				this.showErrorAlert(errorRes);
+			}
+		);
+		this.subscriptions.push(getUserDataSub);
+	}
+
+	updateUserProfile(data: any, refreshToken?: string, expiresIn?: string) {
+		const updateUserProfileSub = this.authService.updateProfile(data).subscribe(
+			(response: any) => {
+				this.authService.setUser({
+					...response,
+					idToken: data.idToken,
+					photoUrl: null,
+					refreshToken,
+					expiresIn,
+				});
+				this.loadingController.dismiss(null, null, 'sign-up-spinner');
+				this.navigateToHomePage();
+			},
+			errorRes => {
+				this.loadingController.dismiss(null, null, 'sign-up-spinner');
+				this.showErrorAlert(errorRes);
+			}
+		);
+		this.subscriptions.push(updateUserProfileSub);
+	}
+
+	showErrorAlert(errorRes: any) {
+		console.log(errorRes);
+		let errorMsg = 'Could not complete the operation';
+		switch(errorRes.error.error.message) {
+			case 'EMAIL_EXISTS':
+				errorMsg = 'Email already exists. Please try different email';
+				break;
+			case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+				errorMsg = 'Too many attempts. Try after some time.';
+				break;
+			case 'EMAIL_NOT_FOUND':
+				errorMsg = 'Could not find the email. Please check';
+				break;
+			case 'INVALID_PASSWORD':
+				errorMsg = 'Email/Password is incorrect. Please check';
+				break;
+		};
+		this.alertController.create({
+			header: 'Alert',
+			message: errorMsg,
+			buttons: ['Okay']
+		}).then((alertEl: HTMLIonAlertElement) => {
+			alertEl.present();
+		});
+	}
+
+	navigateToHomePage() {
+		if (this.authService.redirectUrl) {
+			this.router.navigateByUrl(this.authService.redirectUrl);
+		} else {
+			this.router.navigateByUrl('/home');
+		}
+	}
 
 }

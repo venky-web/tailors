@@ -1,46 +1,101 @@
 <ion-content>
-  <div class="main-content">
-    <ion-card>
-      <ion-card-header class="ion-text-center">
-        <ion-card-title>{{isLogin ? "Login" : "Signup"}}</ion-card-title>
-      </ion-card-header>
-    
-      <ion-card-content>
-        <form [formGroup]="authForm">
-          <div class="mb-3">
-            <label for="email">Email</label>
-            <input type="text" class="form-control" name="email" formControlName="email"
-              placeholder="Enter Email">
-            <ng-container *ngIf="formCtrls.email.errors && (formCtrls.email.touched || formCtrls.email.dirty)">
-              <ion-text class="error-msg" *ngIf="formCtrls.email.errors.required">Email is required</ion-text>
-              <ion-text class="error-msg" *ngIf="formCtrls.email.errors.invalid">Invalid email</ion-text>
-            </ng-container>
-          </div>
-          <div class="mb-3">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" name="password" formControlName="password"
-              placeholder="Enter Password">
-            <ng-container *ngIf="formCtrls.password.errors && (formCtrls.password.touched || formCtrls.password.dirty)">
-              <ion-text class="error-msg" *ngIf="formCtrls.password.errors.required">Password is required</ion-text>
-              <ion-text class="error-msg" *ngIf="formCtrls.password.errors.minlength">Password should have atleast 6 characters</ion-text>
-            </ng-container>
-          </div>
-          <div class="mb-3" *ngIf="!isLogin">
-            <label for="password2">Confirm Password</label>
-            <input type="password" class="form-control" name="password2" formControlName="password2"
-              placeholder="Re-enter Password">
-            <ng-container *ngIf="formCtrls.password2.errors && (formCtrls.password2.touched || formCtrls.password2.dirty)">
-              <ion-text class="error-msg" *ngIf="formCtrls.password2.errors.required">This field is required</ion-text>
-              <ion-text class="error-msg" *ngIf="formCtrls.password2.errors.minlength">Password should have atleast 6 characters</ion-text>
-              <ion-text class="error-msg" *ngIf="formCtrls.password2.errors.misMatch">Passwords didn't match. Please try again.</ion-text>
-            </ng-container>
-          </div>
-          <ion-button expand="block" type="submit" (click)="onSubmit()">{{ isLogin ? "Login" : "Signup"}}</ion-button>
-        </form>
-        <div class="mt-3">
-          <ion-button expand="block" fill="clear" (click)="signUp()">{{!isLogin ? "Login" : "Signup"}}</ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
+	<div class="main-content">
+		<ion-avatar>
+			<img src="./assets/images/logo2.png" />
+		</ion-avatar>
+		<ng-container *ngIf="!isDesktop">
+			<div class="mobile-view">
+				<ng-template [ngTemplateOutlet]="formSection"></ng-template>
+			</div>
+		</ng-container>
+		<ng-container *ngIf="isDesktop">
+			<ion-card>
+				<ion-card-header class="ion-text-center">
+					<ion-card-title>{{isLogin ? "Login" : "Signup"}}</ion-card-title>
+				</ion-card-header>
+				
+				<ion-card-content>
+					<ng-template [ngTemplateOutlet]="formSection"></ng-template>
+				</ion-card-content>
+			</ion-card>
+		</ng-container>
+	</div>
 </ion-content>
+
+<ng-template #formSection>
+	<form [formGroup]="authForm">
+		<ion-list lines="full">
+			<ion-item *ngIf="!isLogin">
+				<ion-label position="floating">Username</ion-label>
+				<ion-input clearInput name="username" formControlName="username" 
+					placeholder="Enter username">
+				</ion-input>
+			</ion-item>
+			<ng-container *ngIf="!isLogin &&
+				formCtrls.username.errors && 
+				(formCtrls.username.touched || formCtrls.username.dirty)">
+				<div class="error-msg" *ngIf="formCtrls.username.errors.minlength">
+					Username must have 3 or more characters
+				</div>
+				<div class="error-msg" *ngIf="formCtrls.username.errors.maxlength">
+					Username must not exceed 100 characters
+				</div>
+			</ng-container>
+			<ion-item>
+				<ion-label position="floating">Email</ion-label>
+				<ion-input clearInput type="email" name="email" formControlName="email" 
+					placeholder="Enter email">
+				</ion-input>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.email.errors && (formCtrls.email.touched || formCtrls.email.dirty)">
+				<div class="error-msg" *ngIf="formCtrls.email.errors.required">
+					Email is required
+				</div>
+				<div class="error-msg" *ngIf="formCtrls.email.errors.invalid">
+					Invalid email
+				</div>
+			</ng-container>
+			<ion-item>
+				<ion-label position="floating">Password</ion-label>
+				<ion-input clearInput type="password" name="password" formControlName="password" 
+					placeholder="Enter password">
+				</ion-input>
+			</ion-item>
+			<ng-container *ngIf="formCtrls.password.errors && (formCtrls.password.touched || formCtrls.password.dirty)">
+				<div class="error-msg" *ngIf="formCtrls.password.errors.required">
+					This field is required
+				</div>
+				<div class="error-msg" *ngIf="formCtrls.password.errors.minlength">
+					Password should have atleast 6 characters
+				</div>
+			</ng-container>
+			<ng-container *ngIf="!isLogin">
+				<ion-item>
+					<ion-label position="floating">Confirm Password</ion-label>
+					<ion-input clearInput type="password" name="password2" formControlName="password2" 
+						placeholder="Re-enter password">
+					</ion-input>
+				</ion-item>
+				<ng-container *ngIf="formCtrls.password2.errors && (formCtrls.password2.touched || formCtrls.password2.dirty)">
+					<div class="error-msg" *ngIf="formCtrls.password2.errors.required">
+						This field is required
+					</div>
+					<div class="error-msg" *ngIf="formCtrls.password2.errors.minlength">
+						Password should have atleast 6 characters
+					</div>
+				</ng-container>
+			</ng-container>
+		</ion-list>
+		<ion-text class="error-msg" *ngIf="authForm?.errors?.misMatch">
+			Passwords didn't match
+		</ion-text>
+	</form>
+	<div class="mt-3">
+		<ion-button class="ion-margin-bottom" expand="block" type="submit" (click)="onSubmit()">
+			{{ isLogin ? "Login" : "Signup"}}
+		</ion-button>
+		<ion-button expand="block" fill="clear" (click)="changeForm()">
+			{{!isLogin ? "Login" : "Signup"}}
+		</ion-button>
+	</div>
+</ng-template>
