@@ -10,6 +10,8 @@ export interface Order {
     items?: OrderItem[];
     status?: string;
     comments?: string;
+    createdBy?: string;
+    updatedBy?: string;
 }
 
 export interface OrderItem {
@@ -21,4 +23,6 @@ export interface OrderItem {
     status?: string;
     deliveryDate?: Date | string;
     comments?: string;
+    createdBy?: string;
+    updatedBy?: string;
 }

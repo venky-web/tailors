@@ -9,6 +9,10 @@ export interface IEmployee {
     address?: IAddress;
     mobileNumber?: string | number;
     compensation?: ICompensation[];
+    createdBy?: string;
+    updatedBy?: string;
+    createdDate?: Date | string;
+    updatedDate?: Date | string;
 }
 
 export interface IAddress {

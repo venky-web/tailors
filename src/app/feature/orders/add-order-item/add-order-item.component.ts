@@ -6,9 +6,10 @@ import { Subscription } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 
-import { Order, OrderItem } from 'app-models';
-import { OrderService } from 'app-services';
+import { Order, OrderItem, User } from 'app-models';
+import { AuthService, OrderService } from 'app-services';
 import { AppUtils } from 'app-shared';
+import { take } from 'rxjs/operators';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class AddOrderItemComponent implements OnInit, OnDestroy {
 	subscriptions: Subscription[];
 	orderItemForm: FormGroup;
 	appUtils: any;
+	userDetails: User;
 
 	itemTypes: any[];
 	itemPrices: any[];
@@ -34,6 +36,7 @@ export class AddOrderItemComponent implements OnInit, OnDestroy {
 	constructor(
 		private modalCtrl: ModalController,
 		private orderService: OrderService,
+		private authService: AuthService,
 	) {
 		this.subscriptions = [];
 		this.appUtils = AppUtils;
@@ -45,6 +48,13 @@ export class AddOrderItemComponent implements OnInit, OnDestroy {
 		if (this.loadedOrderItem) {
 			this.patchForm(this.loadedOrderItem);
 		}
+		this.authService.user.pipe(take(1)).subscribe(
+			(user: any) => {
+				if (user) {
+					this.userDetails = user;
+				}
+			}
+		);
 	}
 
 	ngOnDestroy() {
@@ -98,15 +108,18 @@ export class AddOrderItemComponent implements OnInit, OnDestroy {
 		const formData = this.appUtils.getTrimmedObj(this.orderItemForm.value);
 		const orderItem: OrderItem = this.constructOrderItem(formData);
 		if (this.loadedOrder) {
+			orderItem.updatedBy = this.userDetails ? this.userDetails.userId : null;
 			if (this.loadedOrderItem) {
 				const orderItemIndex = this.loadedOrder.items.findIndex((o: OrderItem) =>
 					o.itemId === this.loadedOrderItem.itemId
 				);
 				this.loadedOrder.items[orderItemIndex] = cloneDeep(orderItem);
 			} else {
+				orderItem.createdBy = this.userDetails ? this.userDetails.userId : null;
 				this.loadedOrder.items.push(orderItem);
 			}
 			this.loadedOrder.updatedDate = moment().format();
+			this.loadedOrder.updatedBy = this.userDetails ? this.userDetails.userId : null;
 			this.loadedOrder.totalAmount = this.getTotalAmount(this.loadedOrder.items);
 			this.loadedOrder.deliveryDate = this.getDeliveryDate(this.loadedOrder.items);
 			this.updateOrderItem(this.loadedOrder);
@@ -114,6 +127,8 @@ export class AddOrderItemComponent implements OnInit, OnDestroy {
 			const newOrder: Order= {
 				createdDate: moment().format(),
 				updatedDate: moment().format(),
+				createdBy: this.userDetails ? this.userDetails.userId : null,
+				updatedBy: this.userDetails ? this.userDetails.userId : null,
 				deliveryDate: formData.deliveryDate,
 				items: [],
 				status: formData.status,

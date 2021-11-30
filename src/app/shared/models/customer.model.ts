@@ -10,4 +10,6 @@ export interface Customer {
   address?: IAddress[];
   createdDate?: Date | string;
   updatedDate?: Date | string;
+  createdBy?: string;
+  updatedBy?: string;
 }
