@@ -16,27 +16,27 @@ const routes: Routes = [
       {
         path: 'home',
         loadChildren: () => import('./feature/home/home.module').then( m => m.HomePageModule),
-        canActivate: [AuthGuard]
+        canLoad: [AuthGuard]
       },
       {
         path: 'dashboard',
         loadChildren: () => import('./feature/dashboard/dashboard.module').then( m => m.DashboardPageModule),
-        canActivate: [AuthGuard]
+        canLoad: [AuthGuard]
       },
       {
         path: 'customers',
         loadChildren: () => import('./feature/customers/customers.module').then( m => m.CustomersPageModule),
-        canActivate: [AuthGuard]
+        canLoad: [AuthGuard]
       },
       {
         path: 'emp',
         loadChildren: () => import('./feature/employee/employee.module').then( m => m.EmployeePageModule),
-        canActivate: [AuthGuard]
+        canLoad: [AuthGuard]
       },
       {
         path: 'orders',
         loadChildren: () => import('./feature/orders/orders.module').then( m => m.OrdersPageModule),
-        canActivate: [AuthGuard]
+        canLoad: [AuthGuard]
       },
       {
         path: '',

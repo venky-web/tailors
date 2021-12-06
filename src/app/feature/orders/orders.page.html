@@ -97,7 +97,7 @@
 				</div>
 				<div class="overview-content">
 					<div class="overview-item" *ngFor="let item of overViewData">
-						<span>{{item.orderStatus}}</span>
+						<span>{{item.orderStatus | titlecase}}</span>
 						<span>{{item.orderCount}}</span>
 					</div>
 				</div>
