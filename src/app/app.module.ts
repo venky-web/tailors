@@ -10,6 +10,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { BaseLayoutPageModule } from './base';
 import { TokenInterceptor } from 'app-services';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +23,12 @@ import { TokenInterceptor } from 'app-services';
     AppRoutingModule,
     HttpClientModule,
     BaseLayoutPageModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
   providers: [
     {
