@@ -11,11 +11,11 @@ export const FEATURES_LIST: FeatureCard[] = [
         iconUrl: './assets/app-icons/orders.png',
         routeUrl: '/orders'
     },
-    {
-        name: 'Reports',
-        iconUrl: './assets/app-icons/reports.png',
-        routeUrl: '/reports'
-    },
+    // {
+    //     name: 'Reports',
+    //     iconUrl: './assets/app-icons/reports.png',
+    //     routeUrl: '/reports'
+    // },
     {
         name: 'Customers',
         iconUrl: './assets/app-icons/customers.png',
@@ -26,9 +26,9 @@ export const FEATURES_LIST: FeatureCard[] = [
         iconUrl: './assets/app-icons/employees.png',
         routeUrl: '/emp'
     },
-    {
-        name: 'Vendors',
-        iconUrl: './assets/app-icons/suppliers.png',
-        routeUrl: '/vendors'
-    },
+    // {
+    //     name: 'Vendors',
+    //     iconUrl: './assets/app-icons/suppliers.png',
+    //     routeUrl: '/vendors'
+    // },
 ];

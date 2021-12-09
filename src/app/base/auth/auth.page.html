@@ -89,13 +89,13 @@
 		<ion-text class="error-msg" *ngIf="authForm?.errors?.misMatch">
 			Passwords didn't match
 		</ion-text>
+		<div class="mt-3">
+			<ion-button class="ion-margin-bottom" expand="block" type="submit" (click)="onSubmit()">
+				{{ isLogin ? "Login" : "Signup"}}
+			</ion-button>
+			<ion-button expand="block" fill="clear" (click)="changeForm()">
+				{{!isLogin ? "Login" : "Signup"}}
+			</ion-button>
+		</div>
 	</form>
-	<div class="mt-3">
-		<ion-button class="ion-margin-bottom" expand="block" type="submit" (click)="onSubmit()">
-			{{ isLogin ? "Login" : "Signup"}}
-		</ion-button>
-		<ion-button expand="block" fill="clear" (click)="changeForm()">
-			{{!isLogin ? "Login" : "Signup"}}
-		</ion-button>
-	</div>
 </ng-template>
