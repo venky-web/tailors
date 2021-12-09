@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Platform } from '@ionic/angular';
+
 @Component({
   selector: 'app-base-layout',
   templateUrl: './base-layout.page.html',
@@ -7,7 +9,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BaseLayoutPage implements OnInit {
 
-  constructor() { }
+  platforms: string[];
+  isDesktop: boolean;
+
+  constructor(
+		private platform: Platform,
+  ) {
+    this.platforms = this.platform.platforms();
+		this.isDesktop = this.platforms.includes('desktop');
+  }
 
   ngOnInit() {
   }

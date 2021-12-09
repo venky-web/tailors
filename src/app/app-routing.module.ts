@@ -39,12 +39,21 @@ const routes: Routes = [
         canLoad: [AuthGuard]
       },
       {
+        path: 'account',
+        loadChildren: () => import('./feature/account/account.module').then( m => m.AccountPageModule)
+      },
+      {
         path: '',
-        redirectTo: 'home',
+        redirectTo: '/home',
         pathMatch: 'full'
       },
     ]
   },
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({

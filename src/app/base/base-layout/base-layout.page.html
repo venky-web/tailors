@@ -1,3 +1,27 @@
-<ion-content>
-    <ion-router-outlet></ion-router-outlet>
-</ion-content>
+<ng-container *ngIf="isDesktop">
+    <ion-content>
+        <ion-router-outlet></ion-router-outlet>
+    </ion-content>
+</ng-container>
+
+<ng-container *ngIf="!isDesktop">
+    <ion-tabs>
+        <ion-tab-bar slot="bottom">
+            <ion-tab-button tab="home">
+                <ion-icon name="home"></ion-icon>
+                <ion-label>Home</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="orders">
+                <ion-icon name="list-circle"></ion-icon>
+                <ion-label>Orders</ion-label>
+            </ion-tab-button>
+        
+            <ion-tab-button tab="account">
+                <ion-icon name="person-circle"></ion-icon>
+                <ion-label>Account</ion-label>
+            </ion-tab-button>
+        </ion-tab-bar>
+    </ion-tabs>
+</ng-container>
+
