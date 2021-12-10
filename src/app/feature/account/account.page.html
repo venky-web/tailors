@@ -1,9 +1,48 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>account</ion-title>
-  </ion-toolbar>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/home"></ion-back-button>
+		</ion-buttons>
+		<ion-title>My Account</ion-title>
+		<ion-buttons slot="primary">
+			<ion-button (click)="onLogout()" slot="icon-only" color="danger">
+				<ion-icon name="power"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+	<ion-grid>
+		<ion-row>
+			<ion-col size="12" sizeSm="4" offsetSm="4" class="ion-text-center">
+				<img [src]="userDetails.photoUrl" class="user-img"
+					*ngIf="userDetails?.photoUrl"/>
+				<img src="./assets/images/user.png" class="user-img"
+					*ngIf="!userDetails.photoUrl"/>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col size="12" class="user-details">
+				<div class="header">Name</div>
+				<div class="value">{{
+					userDetails && userDetails.displayName ? userDetails.displayName : 'Please add a name'
+				}}</div>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col size="12" class="user-details">
+				<div class="header">Email</div>
+				<div class="value">{{
+					userDetails && userDetails.email ? userDetails.email : 'Please add an email'
+				}}</div>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col size="12" class="user-details">
+				<div class="header">Mobile Number</div>
+				<div class="value not-found">Please add a mobile Number</div>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
 </ion-content>

@@ -1,0 +1,15 @@
+.user-img {
+    height: 128px;
+}
+
+.user-details {
+    padding: 8px;
+
+    .value {
+        font-size: 1.4rem;
+
+        &.not-found {
+            color: var(--ion-color-medium);
+        }
+    }
+}

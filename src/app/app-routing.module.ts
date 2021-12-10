@@ -40,7 +40,8 @@ const routes: Routes = [
       },
       {
         path: 'account',
-        loadChildren: () => import('./feature/account/account.module').then( m => m.AccountPageModule)
+        loadChildren: () => import('./feature/account/account.module').then( m => m.AccountPageModule),
+        canLoad: [AuthGuard]
       },
       {
         path: '',
