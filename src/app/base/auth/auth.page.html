@@ -25,23 +25,22 @@
 <ng-template #formSection>
 	<form [formGroup]="authForm">
 		<ion-list lines="full">
-			<ion-item *ngIf="!isLogin">
+			<ion-item>
 				<ion-label position="floating">Username</ion-label>
-				<ion-input clearInput name="username" formControlName="username" 
+				<ion-input clearInput name="userName" formControlName="userName" 
 					placeholder="Enter username">
 				</ion-input>
 			</ion-item>
-			<ng-container *ngIf="!isLogin &&
-				formCtrls.username.errors && 
-				(formCtrls.username.touched || formCtrls.username.dirty)">
-				<div class="error-msg" *ngIf="formCtrls.username.errors.minlength">
+			<ng-container *ngIf="formCtrls.userName.errors && 
+				(formCtrls.userName.touched || formCtrls.userName.dirty)">
+				<div class="error-msg" *ngIf="formCtrls.userName.errors.minlength">
 					Username must have 3 or more characters
 				</div>
-				<div class="error-msg" *ngIf="formCtrls.username.errors.maxlength">
+				<div class="error-msg" *ngIf="formCtrls.userName.errors.maxlength">
 					Username must not exceed 100 characters
 				</div>
 			</ng-container>
-			<ion-item>
+			<!-- <ion-item>
 				<ion-label position="floating">Email</ion-label>
 				<ion-input clearInput type="email" name="email" formControlName="email" 
 					placeholder="Enter email">
@@ -54,7 +53,7 @@
 				<div class="error-msg" *ngIf="formCtrls.email.errors.invalid">
 					Invalid email
 				</div>
-			</ng-container>
+			</ng-container> -->
 			<ion-item>
 				<ion-label position="floating">Password</ion-label>
 				<ion-input clearInput type="password" name="password" formControlName="password" 

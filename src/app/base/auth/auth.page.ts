@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { AuthService } from 'app-services';
+import { AuthService, UserService } from 'app-services';
 import { AppUtils } from 'app-shared';
 
 @Component({
@@ -24,6 +24,7 @@ export class AuthPage implements OnInit, OnDestroy {
 
 	constructor(
 		private authService: AuthService,
+		private userService: UserService,
 		private router: Router,
 		private platform: Platform,
 		private loadingController: LoadingController,
@@ -37,10 +38,11 @@ export class AuthPage implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.authForm = new FormGroup({
-			email: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.email]}),
-			password: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(6)]})
-		});
+		this.createForm();
+		// this.authForm = new FormGroup({
+		// 	email: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.email]}),
+		// 	password: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(6)]})
+		// });
 	}
 
 	ngOnDestroy() {
@@ -53,6 +55,14 @@ export class AuthPage implements OnInit, OnDestroy {
 		this.authForm.reset();
 		this.isLogin = true;
 		this.ngOnDestroy();
+	}
+
+	createForm() {
+		this.authForm = new FormGroup({
+			userName: new FormControl(null, {updateOn: "blur", validators: [Validators.required]}),
+			email: new FormControl(null, {updateOn: 'blur', validators: [Validators.email]}),
+			password: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(6)]})
+		});
 	}
 
 	get formCtrls() { return this.authForm.controls; }
@@ -131,9 +141,15 @@ export class AuthPage implements OnInit, OnDestroy {
 			id: 'login-spinner'
 		}).then((loadingEl: HTMLIonLoadingElement) => {
 			loadingEl.present();
-			const loginSub = this.authService.login(formData.email, formData.password).subscribe(
+			const loginSub = this.authService.login(formData.userName, formData.password).subscribe(
 				(response: any) => {
-					this.getUserData(response.idToken, response.refreshToken, response.expiresIn);
+					// this.getUserData(response.idToken, response.refreshToken, response.expiresIn);
+					console.log("login details", response);
+					this.userService.setUser(response.user);
+					this.userService.setBusiness(response.business);
+					this.userService.setAccessToken(response.accessToken);
+					this.navigateToHomePage();
+					loadingEl.dismiss();
 				},
 				errorRes => {
 					loadingEl.dismiss();

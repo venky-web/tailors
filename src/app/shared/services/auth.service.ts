@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, throwError } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -9,6 +9,7 @@ import { Storage } from '@capacitor/storage';
 
 import { environment } from 'src/environments/environment';
 import { AuthResponse, User } from 'app-models';
+import { CommonService } from './common.service';
 
 
 @Injectable({
@@ -26,6 +27,7 @@ export class AuthService {
     constructor(
         private http: HttpClient,
         private router: Router,
+        private commonService: CommonService,
     ) {
         this.envKeys = environment;
         this.loadData();
@@ -110,14 +112,30 @@ export class AuthService {
         );
     }
 
-    login(email: string, password: string) {
-        return this.http.post<AuthResponse>(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + this.envKeys.webApiKey,
-            {email, password, returnSecureToken: true}
-        ).pipe(
-            tap(resData => {
-                this.setUser(resData);
-            })
+    login(username: string, password: string) {
+        return this.http.post(
+            this.commonService.coreServiceUrl + "login/",
+            {username, password}
+        );
+    }
+
+    getAccessToken() {
+        return this.http.get(
+            this.commonService.coreServiceUrl + "token/",
+        );
+    }
+
+    activateUser(data: any) {
+        return this.http.post(
+            this.commonService.coreServiceUrl + "activate-user/",
+            data
+        );
+    }
+
+    activateStaffUser(data: any) {
+        return this.http.post(
+            this.commonService.coreServiceUrl + "activate-staff/",
+            data
         );
     }
 
