@@ -59,8 +59,10 @@ export class AuthPage implements OnInit, OnDestroy {
 
 	createForm() {
 		this.authForm = new FormGroup({
-			userName: new FormControl(null, {updateOn: "blur", validators: [Validators.required]}),
-			email: new FormControl(null, {updateOn: 'blur', validators: [Validators.email]}),
+			userName: new FormControl(null, {
+				updateOn: "blur",
+				validators: [Validators.required, Validators.minLength(3), Validators.maxLength(100)]
+			}),
 			password: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(6)]})
 		});
 	}
@@ -70,14 +72,22 @@ export class AuthPage implements OnInit, OnDestroy {
 	changeForm() {
 		this.authForm.reset();
 		if (this.isLogin) {
-			this.authForm.addControl('password2', new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}));
 			this.authForm.addControl(
-				'username',
-				new FormControl(null, {updateOn: 'blur', validators: [Validators.minLength(3), Validators.maxLength(100)]})
+				"email",
+				new FormControl(null, {updateOn: 'blur', validators: [Validators.email]})
+			);
+			this.authForm.addControl(
+				'password2',
+				new FormControl(null, {updateOn: 'blur', validators: [Validators.required]})
+			);
+			this.authForm.addControl(
+				'accountType',
+				new FormControl("normal", {updateOn: 'change', validators: [Validators.required]})
 			);
 		} else {
 			this.authForm.removeControl('password2');
-			this.authForm.removeControl('username');
+			this.authForm.removeControl('email');
+			this.authForm.removeControl('accountType');
 		}
 		this.isLogin = !this.isLogin;
 	}
@@ -112,21 +122,28 @@ export class AuthPage implements OnInit, OnDestroy {
 			id: 'sign-up-spinner'
 		}).then((loadingEl: HTMLIonLoadingElement) => {
 			loadingEl.present();
-			const signUpSub = this.authService.signUp(formData.email, formData.password).subscribe(
-				(response: any) => {
-					const payload = {
-						idToken: response.idToken,
-						displayName: formData.username,
-						photoUrl: null,
-						returnSecureToken: true
-					};
-					this.updateUserProfile(payload, response.refreshToken, response.expiresIn);
+			const signUpPayload: any = {
+				username: formData.userName,
+				email: formData.email,
+				password: formData.password,
+			};
+			if (formData.businessName) {
+				signUpPayload.business = {
+					name: formData.businessName
+				};
+			}
+			const signUpSub = this.authService.signUp(signUpPayload, this.authForm.controls.hasOwnProperty("businessName"))
+				.subscribe((response: any) => {
+					this.userService.setUser(response.user);
+					this.userService.setBusiness(response.business);
+					this.userService.setAccessToken(response.access_token);
+					this.navigateToHomePage();
+					loadingEl.dismiss();
 				},
 				errorRes => {
 					loadingEl.dismiss();
 					this.showErrorAlert(errorRes);
-				}
-			);
+				});
 			this.subscriptions.push(signUpSub);
 		});
 	}
@@ -144,10 +161,9 @@ export class AuthPage implements OnInit, OnDestroy {
 			const loginSub = this.authService.login(formData.userName, formData.password).subscribe(
 				(response: any) => {
 					// this.getUserData(response.idToken, response.refreshToken, response.expiresIn);
-					console.log("login details", response);
 					this.userService.setUser(response.user);
 					this.userService.setBusiness(response.business);
-					this.userService.setAccessToken(response.accessToken);
+					this.userService.setAccessToken(response.access_token);
 					this.navigateToHomePage();
 					loadingEl.dismiss();
 				},
@@ -234,6 +250,21 @@ export class AuthPage implements OnInit, OnDestroy {
 			this.router.navigateByUrl(this.authService.redirectUrl);
 		} else {
 			this.router.navigateByUrl('/home');
+		}
+	}
+
+	onSelectAccountType(event: any) {
+		if (event && event.detail && event.detail.value) {
+			if (event.detail.value === 'business') {
+				const nameCtrl = new FormControl(null, {
+					updateOn: "blur", validators: [Validators.required, Validators.minLength(5), Validators.maxLength(250)]
+				});
+				this.authForm.addControl("businessName", nameCtrl);
+			} else {
+				if (this.authForm.controls.businessName) {
+					this.authForm.removeControl("businessName");
+				}
+			}
 		}
 	}
 

@@ -18,7 +18,6 @@ export class AuthGuard implements CanLoad {
 
     async canLoad(route: Route, segments: UrlSegment[]): Promise<boolean> {
         const userDetails = await Storage.get({key: 'userDetails'});
-        console.log("user details", userDetails);
         if (userDetails && userDetails.value) {
             // const user: User = JSON.parse(userDetails.value);
             // if(!user.expiresIn || moment(user.expiresIn).unix() <= moment().unix()) {

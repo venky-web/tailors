@@ -1,25 +1,27 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="main"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>MTailors</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button menu="main"></ion-menu-button>
+        </ion-buttons>
+        <ion-title>MTailors</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="6" sizeSm="3" *ngFor="let feature of features">
-        <section class="feature-tile" (click)="onClickTile(feature.routeUrl)">
-          <ion-thumbnail>
-            <ion-img [src]="feature.iconUrl"></ion-img>
-          </ion-thumbnail>
-          <ion-text class="feature-name">{{feature.name | titlecase}}</ion-text>
-        </section>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-grid>
+        <ion-row>
+            <ng-container *ngFor="let feature of features">
+                <ion-col size="6" sizeSm="3" *ngIf="feature.hasAccess">
+                    <section class="feature-tile" (click)="onClickTile(feature.routeUrl)">
+                        <ion-thumbnail>
+                            <ion-img [src]="feature.iconUrl"></ion-img>
+                        </ion-thumbnail>
+                        <ion-text class="feature-name">{{feature.name | titlecase}}</ion-text>
+                    </section>
+                </ion-col>
+            </ng-container>
+        </ion-row>
+    </ion-grid>
   <!-- <ion-tabs>
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="home">

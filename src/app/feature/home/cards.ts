@@ -3,13 +3,15 @@ export interface FeatureCard {
     iconUrl?: string;
     imageUrl?: string;
     routeUrl?: string;
+    hasAccess?: boolean;
 }
 
 export const FEATURES_LIST: FeatureCard[] = [
     {
         name: 'Orders',
         iconUrl: './assets/app-icons/orders.png',
-        routeUrl: '/orders'
+        routeUrl: '/orders',
+        hasAccess: true,
     },
     // {
     //     name: 'Reports',
@@ -19,12 +21,14 @@ export const FEATURES_LIST: FeatureCard[] = [
     {
         name: 'Customers',
         iconUrl: './assets/app-icons/customers.png',
-        routeUrl: '/customers'
+        routeUrl: '/customers',
+        hasAccess: true,
     },
     {
         name: 'Employees',
         iconUrl: './assets/app-icons/employees.png',
-        routeUrl: '/emp'
+        routeUrl: '/emp',
+        hasAccess: true,
     },
     // {
     //     name: 'Vendors',

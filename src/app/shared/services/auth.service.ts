@@ -101,11 +101,12 @@ export class AuthService {
         this.updateStorage(user);
     }
 
-    signUp(email: string, password: string) {
-        return this.http.post<AuthResponse>(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + this.envKeys.webApiKey,
-            {email, password, returnSecureToken: true}
-        ).pipe(
+    signUp(payload: any, isBusiness: boolean) {
+        let url = this.commonService.accountServiceUrl + "create/";
+        if (isBusiness) {
+            url = this.commonService.accountServiceUrl + "business/create/";
+        }
+        return this.http.post(url, payload).pipe(
             tap(resData => {
                 this.setUser(resData);
             })

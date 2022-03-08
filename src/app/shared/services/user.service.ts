@@ -34,6 +34,7 @@ export class UserService {
     }
 
 	setUser(user: any, updateStorage: boolean = true) {
+        if (!user) { return; }
 		this._user = user;
         if (updateStorage) {
             Storage.set({key: 'userDetails', value: JSON.stringify(user)});
@@ -41,6 +42,7 @@ export class UserService {
 	}
 
     setBusiness(business: any, updateStorage: boolean = true) {
+        if (!business) { return; }
         this._business = business;
         if (updateStorage) {
             Storage.set({key: 'bDetails', value: JSON.stringify(business)});
@@ -48,6 +50,7 @@ export class UserService {
     }
 
     setAccessToken(token: string, updateStorage: boolean = true) {
+        if (!token) { return; }
         this._token = token;
         if (updateStorage) {
             Storage.set({key: 'token', value: token});

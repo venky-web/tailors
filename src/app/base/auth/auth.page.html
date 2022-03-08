@@ -1,5 +1,6 @@
 <ion-content>
-	<div class="main-content">
+	<div class="main-content"
+		[ngClass]="{'desktop': isDesktop}">
 		<ion-avatar>
 			<img src="./assets/images/logo2.png" />
 		</ion-avatar>
@@ -40,20 +41,22 @@
 					Username must not exceed 100 characters
 				</div>
 			</ng-container>
-			<!-- <ion-item>
-				<ion-label position="floating">Email</ion-label>
-				<ion-input clearInput type="email" name="email" formControlName="email" 
-					placeholder="Enter email">
-				</ion-input>
-			</ion-item>
-			<ng-container *ngIf="formCtrls.email.errors && (formCtrls.email.touched || formCtrls.email.dirty)">
-				<div class="error-msg" *ngIf="formCtrls.email.errors.required">
-					Email is required
-				</div>
-				<div class="error-msg" *ngIf="formCtrls.email.errors.invalid">
-					Invalid email
-				</div>
-			</ng-container> -->
+			<ng-container *ngIf="!isLogin">
+				<ion-item>
+					<ion-label position="floating">Email</ion-label>
+					<ion-input clearInput type="email" name="email" formControlName="email" 
+						placeholder="Enter email">
+					</ion-input>
+				</ion-item>
+				<ng-container *ngIf="formCtrls.email.errors && (formCtrls.email.touched || formCtrls.email.dirty)">
+					<div class="error-msg" *ngIf="formCtrls.email.errors.required">
+						Email is required
+					</div>
+					<div class="error-msg" *ngIf="formCtrls.email.errors.invalid">
+						Invalid email
+					</div>
+				</ng-container>
+			</ng-container>
 			<ion-item>
 				<ion-label position="floating">Password</ion-label>
 				<ion-input clearInput type="password" name="password" formControlName="password" 
@@ -81,6 +84,46 @@
 					</div>
 					<div class="error-msg" *ngIf="formCtrls.password2.errors.minlength">
 						Password should have atleast 6 characters
+					</div>
+				</ng-container>
+			</ng-container>
+			<ng-container *ngIf="!isLogin">
+				<ion-list>
+					<ion-radio-group value="normal" name="accountType"
+						formControlName="accountType" (ionChange)="onSelectAccountType($event)">
+						<ion-list-header>
+							<ion-label>Account Type</ion-label>
+						</ion-list-header>
+						<div class="types-radio-section">
+							<ion-item lines="none">
+								<ion-label>Normal</ion-label>
+								<ion-radio slot="start" value="normal"></ion-radio>
+							</ion-item>
+							<ion-item lines="none">
+								<ion-label>Business</ion-label>
+								<ion-radio slot="start" value="business"></ion-radio>
+							</ion-item>
+						</div>
+					</ion-radio-group>
+				</ion-list>
+			</ng-container>
+			<ng-container *ngIf="formCtrls?.businessName">
+				<ion-item>
+					<ion-label position="floating">Business Name</ion-label>
+					<ion-input clearInput name="businessName" formControlName="businessName" 
+						placeholder="Enter business Name">
+					</ion-input>
+				</ion-item>
+				<ng-container *ngIf="formCtrls.businessName.errors && 
+					(formCtrls.businessName.touched || formCtrls.businessName.dirty)">
+					<div class="error-msg" *ngIf="formCtrls.businessName.errors.required">
+						This field is required
+					</div>
+					<div class="error-msg" *ngIf="formCtrls.businessName.errors.minlength">
+						Business name must have 5 or more characters
+					</div>
+					<div class="error-msg" *ngIf="formCtrls.businessName.errors.maxlength">
+						Business name must not exceed 250 characters
 					</div>
 				</ng-container>
 			</ng-container>

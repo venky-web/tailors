@@ -6,6 +6,11 @@
     align-items: center;
     padding-top: 2rem;
 
+    &.desktop {
+        padding-top: 0.5rem;
+        row-gap: 0.5rem;
+    }
+
     ion-avatar {
         width: 128px;
         height: 128px;
@@ -13,6 +18,12 @@
 
     ion-card {
         width: 100%;
-        max-width: 350px;
+        max-width: 450px;
+
+        ion-list .types-radio-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 8px;
+        }
     }
 }
