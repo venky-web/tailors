@@ -1,50 +1,59 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="home"></ion-back-button>
-  </ion-buttons>
-    <ion-title>Employees List</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Employees List</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
 <!-- fab placed in the center of the content with a list on each side -->
-  <ng-container *ngIf="!isDesktop">
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button (click)="addEmployee()">
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ng-container>
-  <ion-grid class="list-grid">
-    <ion-row class="b-bottom">
-      <ion-col class="filter-section">
-        <input type="text" class="form-control" placeholder="Search">
-        <ion-button class="icon-only" fill="clear" size="small">
-          <ion-icon name="filter"></ion-icon>
-        </ion-button>
-      </ion-col>
-      <ion-col size="6" class="btn-section ion-text-end" 
-        *ngIf="platforms.includes('desktop') || platforms.includes('tablet')">
-        <ion-button size="small" (click)="addEmployee()">Add Employee</ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-list class="employees-list">
-          <ion-item *ngFor="let employee of employeeList" (click)="goToEmployeeDetails(employee.employeeId)"
-            lines="none" detail button>
-            <ion-avatar slot="start">
-              <img src="./assets/images/man.png" *ngIf="employee.gender === 'male'">
-              <img src="./assets/images/woman.png" *ngIf="employee.gender === 'female'">
-            </ion-avatar>
-            <ion-label>
-              <h3>{{employee.name}}</h3>
-              <span>{{employee.mobileNumber}}</span>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ng-container *ngIf="!isDesktop">
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="addEmployee()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+        </ion-fab>
+    </ng-container>
+    <ion-grid class="list-grid">
+        <ion-row class="b-bottom">
+            <ion-col class="filter-section">
+                <input type="text" class="form-control" placeholder="Search">
+                <ion-button class="icon-only" fill="clear" size="small">
+                <ion-icon name="filter"></ion-icon>
+                </ion-button>
+            </ion-col>
+            <ion-col size="6" class="btn-section ion-text-end" 
+                *ngIf="platforms.includes('desktop') || platforms.includes('tablet')">
+                <ion-button size="small" (click)="addEmployee()">Add Employee</ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-list class="employees-list">
+                    <ion-item *ngFor="let employee of employeeList"
+                        (click)="goToEmployeeDetails(employee.id)"
+                        lines="none" detail button>
+                        <ion-avatar slot="start">
+                            <img src="./assets/images/man.png"
+                                *ngIf="employee.profile && employee.profile.gender === 'male'">
+                            <img src="./assets/images/woman.png"
+                                *ngIf="!employee.profile || employee.profile.gender === 'female'">
+                        </ion-avatar>
+                        <ion-label>
+                            <ng-container *ngIf="!employee.profile">
+                                <h3>{{employee.username}}</h3>
+                                <span>{{employee.mobileNumber}}</span>
+                            </ng-container>
+                            <ng-container *ngIf="employee?.profile">
+                                <h3>{{employee.profile.display_name ? employee.profile.display_name : employee.profile.full_name}}</h3>
+                                <span>{{employee.profile.phone}}</span>
+                            </ng-container>
+                        </ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

@@ -1,64 +1,105 @@
 import { Component, OnInit } from '@angular/core';
-
-import { ModalController, Platform } from '@ionic/angular';
-
-import { EmployeeService } from 'app-services';
-import { IEmployee } from 'app-models';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
+
+import { EmployeeService, UserService } from 'app-services';
 import { EmployeeAddComponent } from './employee-add/employee-add.component';
 
 
 @Component({
-  selector: 'app-employee',
-  templateUrl: './employee.page.html',
-  styleUrls: ['./employee.page.scss'],
+    selector: 'app-employee',
+    templateUrl: './employee.page.html',
+    styleUrls: ['./employee.page.scss'],
 })
 export class EmployeePage implements OnInit {
 
-  platforms: string[];
-  employeeList: IEmployee[];
-  isServiceCalled: boolean;
-  isDesktop: boolean;
+    subscriptions: Subscription[];
 
-  constructor(
-    private employeeService: EmployeeService,
-    private router: Router,
-    private platform: Platform,
-    private modalController: ModalController
-  ) {
-    this.isServiceCalled = false;
-    this.platforms = this.platform.platforms();
-    this.isDesktop = this.platforms.includes('desktop');
-  }
+    platforms: string[];
+    employeeList: any[];
+    isServiceCalled: boolean;
+    isDesktop: boolean;
 
-  ngOnInit() {
-    this.employeeService.employeeList.subscribe((list: IEmployee[]) => {
-      if (this.isServiceCalled) { return; }
-      this.employeeList = list;
-    });
-    console.log(this.platform.platforms());
-  }
+    constructor(
+        private employeeService: EmployeeService,
+        private router: Router,
+        private platform: Platform,
+        private modalController: ModalController,
+        private userService: UserService,
+        private loadingCtrl: LoadingController,
+    ) {
+        this.isServiceCalled = false;
+        this.platforms = this.platform.platforms();
+        this.isDesktop = this.platforms.includes('desktop');
+        this.subscriptions = [];
+    }
 
-  goToEmployeeDetails(id: any) {
-    this.router.navigate(['/emp', id]);
-  }
+    ngOnInit() {}
+    
+    ionViewWillEnter() {
+        this.getEmployees();
+    }
 
-  addEmployee() {
-    console.log('Employee added');
-    this.modalController.create({
-      component: EmployeeAddComponent,
-      componentProps: {
-        employeeList: this.employeeList ? this.employeeList : [],
-        operationType: 'add',
-      },
-      id: 'emp-add-modal'
-    }).then((modalEl: HTMLIonModalElement) => {
-      console.dir(modalEl);
-      modalEl.present();
-      return modalEl.onDidDismiss() ;
-    }).then((resultData: any) => {
-      console.log(resultData);
-    });
-  }
+    getEmployees() {
+        this.loadingCtrl.create({
+            message: "Loading employees list"
+        }).then(loadingEl => {
+            const getEmployeesSub = this.userService.getUsers().subscribe((response: any) => {
+                console.log(response);
+                this.employeeList = response;
+                this.employeeService.updateEmployeeList(this.employeeList);
+                loadingEl.dismiss();
+            },
+            error => {
+                loadingEl.dismiss();
+            });
+            this.subscriptions.push(getEmployeesSub);
+        });
+    }
+
+    goToEmployeeDetails(id: any) {
+        this.router.navigate(['/emp', id]);
+    }
+
+    addEmployee() {
+        this.modalController.create({
+            component: EmployeeAddComponent,
+            componentProps: {
+                employeeList: this.employeeList ? this.employeeList : [],
+                operationType: 'add',
+            },
+            id: 'emp-add-modal'
+        }).then((modalEl: HTMLIonModalElement) => {
+            console.dir(modalEl);
+            modalEl.present();
+            return modalEl.onDidDismiss() ;
+        }).then((resultData: any) => {
+            console.log(resultData);
+        });
+    }
+
+    editEmployeeProfile(employeeId: number) {
+        const employeeData = this.employeeList.find((x: any) => x.id === employeeId);
+        if (!employeeData) {
+            return;
+        }
+        this.modalController.create({
+            component: EmployeeAddComponent,
+            componentProps: {
+                employeeList: this.employeeList ? this.employeeList : [],
+                operationType: 'edit',
+                employeeData: employeeData,
+            },
+            id: 'emp-add-modal'
+        }).then((modalEl: HTMLIonModalElement) => {
+            console.dir(modalEl);
+            modalEl.present();
+            return modalEl.onDidDismiss() ;
+        }).then((resultData: any) => {
+            console.log(resultData);
+        });
+    }
 
 }

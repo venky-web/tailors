@@ -1,123 +1,210 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { IEmployee } from 'app-models';
-import { EmployeeService } from 'app-services';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import * as moment from "moment";
 
+import { IEmployee } from 'app-models';
+import { UserService } from 'app-services';
 
 
 @Component({
-  selector: 'app-employee-add',
-  templateUrl: './employee-add.component.html',
-  styleUrls: ['./employee-add.component.scss'],
+    selector: 'app-employee-add',
+    templateUrl: './employee-add.component.html',
+    styleUrls: ['./employee-add.component.scss'],
 })
 export class EmployeeAddComponent implements OnInit, OnDestroy {
 
-  @Input() employeeList: IEmployee[];
-  @Input() operationType: 'add' | 'update';
+    @Input() employeeList: IEmployee[];
+    @Input() operationType: 'add' | 'update';
 
-  subscriptions: Subscription[];
-  employeeForm: FormGroup;
-  loadedEmployee: IEmployee;
+    subscriptions: Subscription[];
+    employeeForm: FormGroup;
+    employeeProfileForm: FormGroup;
+    loadedEmployee: IEmployee;
 
-  constructor(
-    private modalCtrl: ModalController,
-    private employeeService: EmployeeService,
-  ) {
-    this.subscriptions = [];
-  }
+    step1: boolean;
+    step2: boolean;
+    invalidPassword: boolean;
+    userData: any;
+    userProfileData: any;
 
-  ngOnInit() {
-    this.employeeForm = this.createForm();
-  }
-
-  ngOnDestroy() {
-    if (this.subscriptions) { this.subscriptions.forEach((s: Subscription) => s.unsubscribe()); }
-  }
-
-  createForm() {
-    return new FormGroup({
-      name: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)]}),
-      maritalStatus: new FormControl('single', {updateOn: 'blur', validators: [Validators.required]}),
-      gender: new FormControl('female', {updateOn: 'blur', validators: [Validators.required]}),
-      status: new FormControl('active', {updateOn: 'blur', validators: [Validators.required]}),
-      joinedDate: new FormControl(new Date().toISOString(), {updateOn: 'blur', validators: [Validators.required]}),
-      mobileNumber: new FormControl(null, {
-        updateOn: 'blur',
-        validators: [Validators.required, Validators.minLength(10), Validators.maxLength(10)]}
-      ),
-      employeeId: new FormControl(null, {updateOn: 'blur', validators: [Validators.required]}),
-    });
-  }
-
-  get formCtrls() { return this.employeeForm.controls; }
-
-  onCancel() {
-    this.modalCtrl.dismiss(null, 'cancel', 'emp-add-modal');
-  }
-
-  onSubmit() {
-    this.employeeForm.markAllAsTouched();
-    this.employeeForm.markAsDirty();
-    if (!this.employeeForm.valid) {
-      return;
+    constructor(
+        private modalCtrl: ModalController,
+        private userService: UserService,
+        private loadingCtrl: LoadingController,
+        private toastCtrl: ToastController,
+    ) {
+        this.subscriptions = [];
+        this.step1 = true;
     }
-    const formData = this.employeeForm.value;
-    if (this.operationType === 'add') {
-      this.addEmployee(formData);
-    } else if(this.operationType === 'update') {
-      this.updateEmployee(formData);
-    }
-  }
 
-  addEmployee(formData: any) {
-    const isDuplicate = this.employeeList.find((e: IEmployee) => e.name === formData.name);
-    if (isDuplicate) {
-      this.employeeForm.controls.name.setErrors({duplicate: true});
-      return;
+    ngOnInit() {
+        this.createEmployeeForm();
     }
-    const newEmployee: IEmployee = {
-      employeeId: null,
-      name: formData.name,
-      maritalStatus: formData.maritalStatus,
-      gender: formData.gender,
-      status: formData.status,
-      joinedDate: formData.joinedDate,
-      mobileNumber: formData.mobileNumber,
-    };
-    console.log(newEmployee);
-    // const addEmpSub = this.employeeService.addEmployee(newEmployee).subscribe((response: any) => {
-    //   console.log(response);
-    //   this.modalCtrl.dismiss({name: 'emp', response}, 'confirm', 'emp-add-modal');
-    // });
-    // this.subscriptions.push(addEmpSub);
-  }
 
-  updateEmployee(formData: any) {
-    const isDuplicate = this.employeeList.find((e: IEmployee) =>
-      e.name === formData.name &&
-      e.employeeId !== this.loadedEmployee.employeeId
-    );
-    if (isDuplicate) {
-      this.employeeForm.controls.name.setErrors({duplicate: true});
-      return;
+    ngOnDestroy() {
+        if (this.subscriptions) {
+            this.subscriptions.forEach((s: Subscription) => s.unsubscribe());
+        }
     }
-    const newEmployee: IEmployee = {
-      employeeId: null,
-      name: formData.name,
-      maritalStatus: formData.maritalStatus,
-      gender: formData.gender,
-      status: formData.status,
-      joinedDate: formData.joinedDate,
-      mobileNumber: formData.mobileNumber,
-    };
-    const addEmpSub = this.employeeService.addEmployee(newEmployee).subscribe((response: any) => {
-      console.log(response);
-      this.modalCtrl.dismiss({name: 'emp'}, 'confirm', 'emp-add-modal');
-    });
-    this.subscriptions.push(addEmpSub);
-  }
+
+    createEmployeeForm() {
+        this.employeeForm = new FormGroup({
+            userName: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [
+                    Validators.required,
+                    Validators.minLength(3),
+                    Validators.maxLength(120),
+                    Validators.pattern("^[a-zA-Z0-9_]*$")
+                ]
+            }),
+            email: new FormControl(null, {
+                updateOn: "blur",
+                validators: [Validators.email, Validators.minLength(10), Validators.maxLength(120)]
+            }),
+            password: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [Validators.required, Validators.minLength(6), Validators.maxLength(60)]
+            }),
+            password2: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [Validators.required, Validators.minLength(6), Validators.maxLength(60)]
+            }),
+        });
+    }
+
+    createProfileForm() {
+        this.employeeProfileForm = new FormGroup({
+            fullName: new FormControl(null, {
+                updateOn: "blur",
+                validators: [Validators.required, Validators.minLength(5), Validators.maxLength(200)]
+            }),
+            displayName: new FormControl(null, {
+                updateOn: "blur",
+                validators: [Validators.minLength(3), Validators.maxLength(120)]
+            }),
+            maritalStatus: new FormControl('single', {updateOn: 'blur', validators: [Validators.required]}),
+            gender: new FormControl('female', {updateOn: 'blur', validators: [Validators.required]}),
+            joinedDate: new FormControl(new Date().toISOString(), {
+                updateOn: 'blur',
+                validators: [Validators.required]
+            }),
+            dateOfBirth: new FormControl(new Date().toISOString(), {
+                updateOn: 'blur',
+                validators: [Validators.required]
+            }),
+            mobileNumber: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [Validators.required, Validators.pattern("^([0|\+[0-9]{1,5})?([6-9][0-9]{9})$")]}
+            ),
+        });
+    }
+
+    get formCtrls() { return this.employeeForm.controls; }
+
+    get profileFormCtrls() { return this.employeeProfileForm.controls; }
+
+    onCancel() {
+        this.modalCtrl.dismiss(null, 'cancel', 'emp-add-modal');
+    }
+
+    onClickNext() {
+        this.invalidPassword = false;
+        this.employeeForm.markAllAsTouched();
+        this.employeeForm.markAsDirty();
+        if (!this.employeeForm.valid) {
+            return;
+        }
+        const formData = this.employeeForm.value;
+        if (formData.password !== formData.password2) {
+            this.invalidPassword = true;
+            return;
+        }
+        // const isDuplicate = this.employeeList.find((e: IEmployee) => e.name === formData.name);
+        // if (isDuplicate) {
+        //     this.employeeForm.controls.name.setErrors({duplicate: true});
+        //     return;
+        // }
+        const newEmployee: any = {
+            username: formData.userName,
+            password: formData.password,
+        };
+        if (formData.email && formData.email.length > 0) {
+            newEmployee.email = formData.email;
+        }
+        this.loadingCtrl.create({
+            message: "Creating user",
+        }).then(loadingEl => {
+            loadingEl.present();
+            const addEmpSub = this.userService.createBusinessStaff(newEmployee).subscribe((response: any) => {
+                this.userData = response;
+                this.createProfileForm();
+                this.step1 = false;
+                this.step2 = true;
+                loadingEl.dismiss();
+                this.showToast("Profile data is saved successfully!");
+            },
+            errorRes => {
+                loadingEl.dismiss();
+            });
+            this.subscriptions.push(addEmpSub);
+        });
+    }
+
+    saveProfileData() {
+        this.employeeProfileForm.markAllAsTouched();
+        this.employeeProfileForm.markAsDirty();
+        if (!this.employeeProfileForm.valid) {
+            return;
+        }
+        const formData = this.employeeProfileForm.value;
+        const dob = formData.dateOfBirth ? moment(formData.dateOfBirth).format("YYYY-MM-DD") : null;
+        const joinedDate = formData.joinedDate ? moment(formData.joinedDate).format("YYYY-MM-DD") : null;
+        const employeeProfile: any = {
+            "full_name": formData.fullName,
+            "display_name": formData.displayName,
+            "phone": formData.mobileNumber,
+            "date_of_birth": dob,
+            "joined_date": joinedDate,
+            "gender": formData.gender,
+            "marital_status": formData.maritalStatus
+        };
+        console.log(employeeProfile);
+        this.loadingCtrl.create({
+            message: "Saving profile data",
+        }).then(loadingEl => {
+            loadingEl.present();
+            const saveProfileSub = this.userService.saveProfileData(this.userData.id, employeeProfile).subscribe(
+                (response: any) => {
+                    console.log(response);
+                    this.userProfileData = response;
+                    loadingEl.dismiss();
+                    this.showToast("Profile data is saved successfully!");
+                    const modelData = {
+                        name: "emp",
+                        userData: this.userData,
+                        profileData: this.userProfileData,
+                    }
+                    this.modalCtrl.dismiss(modelData, 'confirm', 'emp-add-modal');
+                },
+                errorRes => {
+                    loadingEl.dismiss();
+                }
+            );
+            this.subscriptions.push(saveProfileSub);
+        });
+    }
+
+    async showToast(message: string) {
+        const toast = await this.toastCtrl.create({
+            message: message,
+            duration: 2000,
+            position: "top"
+        });
+        toast.present();
+    }
 
 }

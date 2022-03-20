@@ -17,7 +17,7 @@
         margin: 5px 0;
     }
 
-    :first-child {
+    > ion-item:first-child {
         margin-top: 0;
     }
 }

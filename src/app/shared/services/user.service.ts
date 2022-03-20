@@ -122,4 +122,11 @@ export class UserService {
         );
     }
 
+    saveProfileData(userId: any, profileData: any) {
+        return this.http.put(
+            `${this.commonService.accountServiceUrl}profile/${userId}/`,
+            profileData
+        );
+    }
+
 }
