@@ -10,6 +10,7 @@ import { Storage } from '@capacitor/storage';
 import { environment } from 'src/environments/environment';
 import { AuthResponse, User } from 'app-models';
 import { CommonService } from './common.service';
+import { UserService } from './user.service';
 
 
 @Injectable({
@@ -28,6 +29,7 @@ export class AuthService {
         private http: HttpClient,
         private router: Router,
         private commonService: CommonService,
+        private userService: UserService,
     ) {
         this.envKeys = environment;
         this.loadData();
@@ -121,8 +123,9 @@ export class AuthService {
     }
 
     getAccessToken() {
-        return this.http.get(
+        return this.http.post(
             this.commonService.coreServiceUrl + "token/",
+            {refresh_token: this.userService.refreshToken}
         );
     }
 

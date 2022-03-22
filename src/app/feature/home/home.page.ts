@@ -29,7 +29,7 @@ export class HomePage implements OnInit, AfterViewInit {
         const userDetails = this.userService.user;
         if (userDetails) {
             this.features.forEach((x: FeatureCard) => {
-                if (x.name === "Customers") {
+                if (x.name === "Customers" || x.name === "Employees") {
                     x.hasAccess = userDetails.user_role === "business_admin" ||
                         userDetails.user_role === "business_staff";
                 }

@@ -27,6 +27,7 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
     step1: boolean;
     step2: boolean;
     invalidPassword: boolean;
+    usersList: any;
     userData: any;
     userProfileData: any;
 
@@ -140,7 +141,10 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
         }).then(loadingEl => {
             loadingEl.present();
             const addEmpSub = this.userService.createBusinessStaff(newEmployee).subscribe((response: any) => {
-                this.userData = response;
+                this.usersList = response;
+                if (this.usersList && this.usersList.length > 0) {
+                    this.userData = this.usersList.find((x: any) => x.username === formData.userName);
+                }
                 this.createProfileForm();
                 this.step1 = false;
                 this.step2 = true;

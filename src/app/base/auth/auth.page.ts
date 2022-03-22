@@ -134,9 +134,7 @@ export class AuthPage implements OnInit, OnDestroy {
 			}
 			const signUpSub = this.authService.signUp(signUpPayload, this.authForm.controls.hasOwnProperty("businessName"))
 				.subscribe((response: any) => {
-					this.userService.setUser(response.user);
-					this.userService.setBusiness(response.business);
-					this.userService.setAccessToken(response.access_token);
+					this.updateUserService(response);
 					this.navigateToHomePage();
 					loadingEl.dismiss();
 				},
@@ -161,9 +159,7 @@ export class AuthPage implements OnInit, OnDestroy {
 			const loginSub = this.authService.login(formData.userName, formData.password).subscribe(
 				(response: any) => {
 					// this.getUserData(response.idToken, response.refreshToken, response.expiresIn);
-					this.userService.setUser(response.user);
-					this.userService.setBusiness(response.business);
-					this.userService.setAccessToken(response.access_token);
+					this.updateUserService(response);
 					this.navigateToHomePage();
 					loadingEl.dismiss();
 				},
@@ -174,6 +170,13 @@ export class AuthPage implements OnInit, OnDestroy {
 			);
 			this.subscriptions.push(loginSub);
 		});
+	}
+
+	updateUserService(response: any) {
+		this.userService.setUser(response.user);
+		this.userService.setBusiness(response.business);
+		this.userService.setAccessToken(response.access_token);
+		this.userService.setRefreshToken(response.refresh_token);
 	}
 
 	getUserData(idToken: string, refreshToken?: string, expiresIn?: string) {

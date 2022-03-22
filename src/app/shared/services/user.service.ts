@@ -15,6 +15,7 @@ export class UserService {
     private _user: any;
     private _business: any;
     private _token: string;
+    private _refreshToken: string;
 	
 	constructor(
 		private http: HttpClient,
@@ -31,6 +32,10 @@ export class UserService {
 
     get accessToken() {
         return this._token;
+    }
+
+    get refreshToken() {
+        return this._refreshToken;
     }
 
 	setUser(user: any, updateStorage: boolean = true) {
@@ -54,6 +59,14 @@ export class UserService {
         this._token = token;
         if (updateStorage) {
             Storage.set({key: 'token', value: token});
+        }
+    }
+
+    setRefreshToken(token: string, updateStorage: boolean = true) {
+        if (!token) { return; }
+        this._refreshToken = token;
+        if (updateStorage) {
+            Storage.set({key: 'refreshToken', value: token});
         }
     }
 

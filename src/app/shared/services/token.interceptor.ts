@@ -8,15 +8,14 @@ import {
   HttpErrorResponse,
   HttpClient,
 } from '@angular/common/http';
-import { throwError, Observable, BehaviorSubject, of } from 'rxjs';
-import { catchError, filter, finalize, take, switchMap } from 'rxjs/operators';
+import { throwError, Observable } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { Storage } from '@capacitor/storage';
 
 import { AuthService } from './auth.service';
 import { User } from '../models/auth.model';
-import { environment } from 'src/environments/environment';
 import { AlertController } from '@ionic/angular';
 import { UserService } from './user.service';
 import { CommonService } from './common.service';
@@ -45,10 +44,10 @@ export class TokenInterceptor implements HttpInterceptor {
 		private userService: UserService,
 		private commonService: CommonService,
 	) {
-		this.authService.user.subscribe((value: any) => {
-			this.userDetails = value;
-		});
-		this.envKeys = environment;
+		// this.authService.user.subscribe((value: any) => {
+		// 	this.userDetails = value;
+		// });
+		// this.envKeys = environment;
 	}
 
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -71,10 +70,10 @@ export class TokenInterceptor implements HttpInterceptor {
 			.pipe(catchError((errRes: HttpErrorResponse) => {
 				if (errRes && errRes.status === 401) {
 					// 401 errors are most likely going to be because we have an expired token that we need to refresh.
-					if (errRes.error.detail === 'TOKEN_EXPIRED') {
+					if (errRes.error.code && errRes.error.code === 'TOKEN_EXPIRED') {
 						// If refreshTokenInProgress is true, we will wait until refreshTokenSubject has a non-null value
 						// which means the new token is ready and we can retry the request again
-						return this.refreshAccessToken().pipe(
+						return this.authService.getAccessToken().pipe(
 							switchMap((success: boolean) => {
 								return next.handle(this.addAuthenticationToken(request));
 							}),
@@ -92,23 +91,6 @@ export class TokenInterceptor implements HttpInterceptor {
 				}
 			})
 		);
-	}
-
-	private refreshAccessToken(): Observable<any> {
-		// let refreshToken: string = this.authService.userDetails.refreshToken;
-		// return this.http.post<RefreshTokenResponse>(
-        //     'https://securetoken.googleapis.com/v1/token?key=' + this.envKeys.webApiKey,
-        //     { grant_type: 'refresh_token', refresh_token: refreshToken }
-        // ).pipe(
-		// 	switchMap(authResponse => {
-		// 		this.authService.setToken(authResponse.id_token);
-		// 		this.authService.setRefreshToken(authResponse.refresh_token);
-		// 		this.authService.setExpireTime(authResponse.expires_in);
-		// 		return of(authResponse.id_token);
-		// 	}),
-		// 	catchError(this.handleError)
-		// );
-		return this.http.get(this.commonService.coreServiceUrl + "token/");
 	}
 
 	private addAuthenticationToken(request: HttpRequest<any>): HttpRequest<any> {
