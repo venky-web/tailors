@@ -73,6 +73,10 @@ export class TokenInterceptor implements HttpInterceptor {
 					if (errRes.error.code && errRes.error.code === 'TOKEN_EXPIRED') {
 						// If refreshTokenInProgress is true, we will wait until refreshTokenSubject has a non-null value
 						// which means the new token is ready and we can retry the request again
+						if (!this.userService.refreshToken) {
+							this.authService.logout();
+							return;
+						}
 						return this.authService.getAccessToken().pipe(
 							switchMap((success: boolean) => {
 								return next.handle(this.addAuthenticationToken(request));

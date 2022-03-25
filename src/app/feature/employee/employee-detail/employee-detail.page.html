@@ -8,6 +8,13 @@
 </ion-header>
 
 <ion-content>
+    <ng-container *ngIf="!isDesktop">
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button (click)="onEditEmployee()">
+                <ion-icon name="create-outline"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+    </ng-container>
     <ion-grid *ngIf="employeeData">
         <ion-row>
             <ion-col class="emp-image-section">

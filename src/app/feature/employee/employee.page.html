@@ -11,9 +11,9 @@
 <!-- fab placed in the center of the content with a list on each side -->
     <ng-container *ngIf="!isDesktop">
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button (click)="addEmployee()">
-            <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
+            <ion-fab-button (click)="addEmployee()">
+                <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
         </ion-fab>
     </ng-container>
     <ion-grid class="list-grid">
@@ -21,7 +21,7 @@
             <ion-col class="filter-section">
                 <input type="text" class="form-control" placeholder="Search">
                 <ion-button class="icon-only" fill="clear" size="small">
-                <ion-icon name="filter"></ion-icon>
+                    <ion-icon name="filter"></ion-icon>
                 </ion-button>
             </ion-col>
             <ion-col size="6" class="btn-section ion-text-end" 

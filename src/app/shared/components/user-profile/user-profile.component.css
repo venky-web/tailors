@@ -1,0 +1,9 @@
+.emp-form-section {
+    padding: 0.8rem;
+}
+
+.profile-btn-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

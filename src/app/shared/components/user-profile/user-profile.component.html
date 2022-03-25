@@ -1,0 +1,126 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>{{operationType | titlecase}} Profile</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button color="danger" (click)="onCancel()">
+                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <form [formGroup]="profileForm" class="emp-form-section">
+        <ion-list lines="full" class="mb-3">
+            <ion-item lines="full">
+                <ion-label position="floating">Full Name</ion-label>
+                <ion-input clearInput name="fullName" formControlName="fullName" 
+                    placeholder="Enter full name">
+                </ion-input>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.fullName.errors &&
+                (formCtrls.fullName.touched || formCtrls.fullName.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.fullName.errors.required"></ng-template>
+                <div class="error-msg" *ngIf="formCtrls.fullName.errors.minlength">
+                    Name should be minimum 5 characters
+                </div>
+                <div class="error-msg" *ngIf="formCtrls.fullName.errors.maxlength">
+                    Name should not be more than 200 characters
+                </div>
+                <div class="error-msg" *ngIf="formCtrls.fullName.errors.duplicate">
+                    Employee with same name already exists
+                </div>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Display Name</ion-label>
+                <ion-input clearInput name="displayName" formControlName="displayName" 
+                    placeholder="Enter display name">
+                </ion-input>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.displayName.errors &&
+                (formCtrls.displayName.touched || formCtrls.displayName.dirty)">
+                <div class="error-msg" *ngIf="formCtrls.displayName.errors.minlength">
+                    Name should be minimum 3 characters
+                </div>
+                <div class="error-msg" *ngIf="formCtrls.displayName.errors.maxlength">
+                    Name should not be more than 120 characters
+                </div>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Gender</ion-label>
+                <ion-select name="gender" formControlName="gender">
+                    <ion-select-option value="male">Male</ion-select-option>
+                    <ion-select-option value="female">Female</ion-select-option>
+                    <ion-select-option value="other">Other</ion-select-option>
+                </ion-select>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.gender.errors &&
+                (formCtrls.gender.touched || formCtrls.gender.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.gender.errors.required"></ng-template>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Marital Status</ion-label>
+                <ion-select name="maritalStatus" formControlName="maritalStatus">
+                    <ion-select-option value="single">Single</ion-select-option>
+                    <ion-select-option value="married">Married</ion-select-option>
+                    <ion-select-option value="devorsed">Devorsed</ion-select-option>
+                </ion-select>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.maritalStatus.errors &&
+                (formCtrls.maritalStatus.touched || formCtrls.maritalStatus.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.maritalStatus.errors.required"></ng-template>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Date of Birth</ion-label>
+                <ion-datetime displayFormat="YYYY-MM-DD" name="dateOfBirth" formControlName="dateOfBirth"
+                    placeholder="Select Date" min="1930">
+                </ion-datetime>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.dateOfBirth.errors &&
+                (formCtrls.dateOfBirth.touched || formCtrls.dateOfBirth.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.dateOfBirth.errors.required"></ng-template>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Mobile Number</ion-label>
+                <ion-input clearInput type="number" name="mobileNumber" formControlName="mobileNumber" 
+                    inputmode="numeric" placeholder="Enter mobile number">
+                </ion-input>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.mobileNumber.errors &&
+                (formCtrls.mobileNumber.touched || formCtrls.mobileNumber.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.mobileNumber.errors.required"></ng-template>
+                <div class="error-msg" *ngIf="formCtrls.mobileNumber.errors.pattern">
+                    Invalid mobile number
+                </div>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Joined Date</ion-label>
+                <ion-datetime displayFormat="YYYY-MM-DD" name="joinedDate" formControlName="joinedDate"
+                    placeholder="Select Date" min="2020">
+                </ion-datetime>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.joinedDate.errors &&
+                (formCtrls.joinedDate.touched || formCtrls.joinedDate.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.joinedDate.errors.required"></ng-template>
+            </ng-container>
+        </ion-list>
+        <div class="profile-btn-section">
+            <ion-button (click)="onCancel()" color="danger" shape="round" fill="clear" >
+                Cancel
+            </ion-button>
+            <ion-button (click)="saveProfileData()" shape="round" fill="solid" >
+                Save
+            </ion-button>
+        </div>
+    </form>
+</ion-content>
+
+<ng-template #fieldRequriedText>
+    <div class="error-msg">This field is required</div>
+</ng-template>
