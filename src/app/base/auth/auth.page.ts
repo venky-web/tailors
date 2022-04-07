@@ -174,7 +174,7 @@ export class AuthPage implements OnInit, OnDestroy {
 
 	updateUserService(response: any) {
 		this.userService.setUser(response.user);
-		this.userService.setBusiness(response.business);
+		this.userService.setBusiness(response.user.business);
 		this.userService.setAccessToken(response.access_token);
 		this.userService.setRefreshToken(response.refresh_token);
 	}

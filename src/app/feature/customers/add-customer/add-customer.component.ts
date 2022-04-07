@@ -1,127 +1,213 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { cloneDeep } from 'lodash';
-import * as moment from 'moment';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
+import * as moment from "moment";
 
-import { Customer } from 'app-models';
-import { CustomerService } from 'app-services';
-import { AppUtils } from 'app-shared';
+import { IEmployee } from 'app-models';
+import { UserService } from 'app-services';
 
 
 @Component({
-  selector: 'app-add-customer',
-  templateUrl: './add-customer.component.html',
-  styleUrls: ['./add-customer.component.scss'],
+    selector: 'app-add-customer',
+    templateUrl: './add-customer.component.html',
+    styleUrls: ['./add-customer.component.scss'],
 })
 export class AddCustomerComponent implements OnInit, OnDestroy {
 
-  	@Input() loadedCustomer: Customer;
+    @Input() customerList: any[];
+    @Input() operationType: 'add' | 'update';
 
-	subscriptions: Subscription[];
-	customerForm: FormGroup;
-	appUtils: any;
+    subscriptions: Subscription[];
+    customerForm: FormGroup;
+    customerProfileForm: FormGroup;
+    loadedEmployee: IEmployee;
 
-	customAlertOptions: any = {
-		subHeader: 'Select Item Type',
-		translucent: true
-	};
+    step1: boolean;
+    step2: boolean;
+    invalidPassword: boolean;
+    usersList: any;
+    userData: any;
+    userProfileData: any;
 
-	constructor(
-		private modalCtrl: ModalController,
-		private customerService: CustomerService,
-	) {
-		this.subscriptions = [];
-		this.appUtils = AppUtils;
-	}
+    constructor(
+        private modalCtrl: ModalController,
+        private userService: UserService,
+        private loadingCtrl: LoadingController,
+        private toastCtrl: ToastController,
+    ) {
+        this.subscriptions = [];
+        this.step1 = true;
+    }
 
-	ngOnInit() {
-		this.customerForm = this.createForm();
-		if (this.loadedCustomer) {
-			this.patchForm(this.loadedCustomer);
-		}
-	}
+    ngOnInit() {
+        this.createEmployeeForm();
+    }
 
-	ngOnDestroy() {
-		if (this.subscriptions) {
-			this.subscriptions.forEach((s: Subscription) => s.unsubscribe());
-		}
-	}
+    ngOnDestroy() {
+        if (this.subscriptions) {
+            this.subscriptions.forEach((s: Subscription) => s.unsubscribe());
+        }
+    }
 
-	createForm() {
-		return new FormGroup({
-			name: new FormControl(null, {updateOn: 'blur', validators: [Validators.required, Validators.minLength(3)]}),
-			mobileNumber: new FormControl(null),
-			gender: new FormControl('female', {updateOn: 'blur', validators: [Validators.required]}),
-			status: new FormControl('active', {updateOn: 'blur', validators: [Validators.required]}),
-		});
-	}
+    createEmployeeForm() {
+        this.customerForm = new FormGroup({
+            userName: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [
+                    Validators.required,
+                    Validators.minLength(3),
+                    Validators.maxLength(120),
+                    Validators.pattern("^[a-zA-Z0-9_-]*$")
+                ]
+            }),
+            email: new FormControl(null, {
+                updateOn: "blur",
+                validators: [Validators.email, Validators.minLength(10), Validators.maxLength(120)]
+            }),
+            password: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [Validators.required, Validators.minLength(6), Validators.maxLength(60)]
+            }),
+            password2: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [Validators.required, Validators.minLength(6), Validators.maxLength(60)]
+            }),
+        });
+    }
 
-	get formCtrls() { return this.customerForm.controls; }
+    createProfileForm() {
+        this.customerProfileForm = new FormGroup({
+            fullName: new FormControl(null, {
+                updateOn: "blur",
+                validators: [Validators.required, Validators.minLength(5), Validators.maxLength(200)]
+            }),
+            displayName: new FormControl(null, {
+                updateOn: "blur",
+                validators: [Validators.minLength(3), Validators.maxLength(120)]
+            }),
+            maritalStatus: new FormControl('single', {updateOn: 'blur', validators: [Validators.required]}),
+            gender: new FormControl('female', {updateOn: 'blur', validators: [Validators.required]}),
+            joinedDate: new FormControl(new Date().toISOString(), {
+                updateOn: 'blur',
+                validators: [Validators.required]
+            }),
+            dateOfBirth: new FormControl(new Date().toISOString(), {
+                updateOn: 'blur',
+                validators: [Validators.required]
+            }),
+            mobileNumber: new FormControl(null, {
+                updateOn: 'blur',
+                validators: [Validators.required, Validators.pattern("^([0|\+[0-9]{1,5})?([6-9][0-9]{9})$")]}
+            ),
+        });
+    }
 
-	patchForm(customerData: Customer) {
-		this.customerForm.patchValue({
-			name: customerData.name,
-			mobileNumber: customerData.mobileNumber,
-			gender: customerData.gender,
-			status: customerData.status,
-		});
-	}
+    get formCtrls() { return this.customerForm.controls; }
 
-	onCancel() {
-		this.modalCtrl.dismiss(null, 'cancel', 'customer-add-modal');
-	}
+    get profileFormCtrls() { return this.customerProfileForm.controls; }
 
-	onSubmit() {
-		this.customerForm.markAllAsTouched();
-		this.customerForm.markAsDirty();
-		if (!this.customerForm.valid) {
-			return;
-		}
-		const formData = this.appUtils.getTrimmedObj(this.customerForm.value);
-		if (this.loadedCustomer) {
-			const customerObj: Customer = cloneDeep(this.loadedCustomer);
-			customerObj.name = formData.name;
-			customerObj.mobileNumber = formData.mobileNumber;
-			customerObj.gender = formData.gender;
-			customerObj.status = formData.status;
-			customerObj.updatedDate = moment().format();
-			this.updateCustomer(customerObj);
-		} else {
-			const newCustomer: Customer = {
-				name: formData.name,
-				mobileNumber: formData.mobileNumber,
-				gender: formData.gender,
-				status: formData.status,
-				createdDate: moment().format(),
-				updatedDate: moment().format(),
-			};
-			this.addCustomer(newCustomer);
-		}
-	}
+    onCancel() {
+        this.modalCtrl.dismiss(null, 'cancel', 'customer-add-modal');
+    }
 
-	addCustomer(newCustomer: Customer) {
-		const addCustomerSub = this.customerService.addCustomer(newCustomer).subscribe(
-			(response: {name: string}) => {
-				newCustomer.id = response.name;
-				this.modalCtrl.dismiss(newCustomer, 'confirm', 'customer-add-modal');
-			}
-		);
-		this.subscriptions.push(addCustomerSub);
-	}
+    onClickNext() {
+        this.invalidPassword = false;
+        this.customerForm.markAllAsTouched();
+        this.customerForm.markAsDirty();
+        if (!this.customerForm.valid) {
+            return;
+        }
+        const formData = this.customerForm.value;
+        if (formData.password !== formData.password2) {
+            this.invalidPassword = true;
+            return;
+        }
+        const newCustomer: any = {
+            username: formData.userName,
+            password: formData.password,
+        };
+        if (formData.email && formData.email.length > 0) {
+            newCustomer.email = formData.email;
+        }
+        this.loadingCtrl.create({
+            message: "Creating user",
+        }).then(loadingEl => {
+            loadingEl.present();
+            const addEmpSub = this.userService.createUser(newCustomer).subscribe((response: any) => {
+                this.usersList = response;
+                if (this.usersList && this.usersList.length > 0) {
+                    this.userData = this.usersList.find((x: any) => x.username === formData.userName);
+                }
+                loadingEl.dismiss();
+                this.showToast("User is created successfully!");
+                // this.createProfileForm();
+                // this.step1 = false;
+                // this.step2 = true;
+                const modelData = {
+                    name: "emp",
+                    userData: this.userData,
+                    profileData: this.userProfileData,
+                }
+                this.modalCtrl.dismiss(modelData, 'confirm', 'customer-add-modal');
+            },
+            errorRes => {
+                loadingEl.dismiss();
+            });
+            this.subscriptions.push(addEmpSub);
+        });
+    }
 
-	updateCustomer(customer: Customer) {
-		const customerId = customer.id;
-		delete customer.id;
-		const updateCustomerSub = this.customerService.updateCustomer(customer, customerId).subscribe(
-			(response: any) => {
-				this.modalCtrl.dismiss(response, 'confirm', 'customer-add-modal');
-			}
-		);
-		this.subscriptions.push(updateCustomerSub);
-	}
+    saveProfileData() {
+        this.customerProfileForm.markAllAsTouched();
+        this.customerProfileForm.markAsDirty();
+        if (!this.customerProfileForm.valid) {
+            return;
+        }
+        const formData = this.customerProfileForm.value;
+        const dob = formData.dateOfBirth ? moment(formData.dateOfBirth).format("YYYY-MM-DD") : null;
+        const joinedDate = formData.joinedDate ? moment(formData.joinedDate).format("YYYY-MM-DD") : null;
+        const employeeProfile: any = {
+            "full_name": formData.fullName,
+            "display_name": formData.displayName,
+            "phone": formData.mobileNumber,
+            "date_of_birth": dob,
+            "joined_date": joinedDate,
+            "gender": formData.gender,
+            "marital_status": formData.maritalStatus
+        };
+        this.loadingCtrl.create({
+            message: "Saving profile data",
+        }).then(loadingEl => {
+            loadingEl.present();
+            const saveProfileSub = this.userService.saveProfileData(this.userData.id, employeeProfile).subscribe(
+                (response: any) => {
+                    this.userProfileData = response;
+                    loadingEl.dismiss();
+                    this.showToast("Profile data is saved successfully!");
+                    const modelData = {
+                        name: "emp",
+                        userData: this.userData,
+                        profileData: this.userProfileData,
+                    }
+                    this.modalCtrl.dismiss(modelData, 'confirm', 'customer-add-modal');
+                },
+                errorRes => {
+                    loadingEl.dismiss();
+                }
+            );
+            this.subscriptions.push(saveProfileSub);
+        });
+    }
 
+    async showToast(message: string) {
+        const toast = await this.toastCtrl.create({
+            message: message,
+            duration: 2000,
+            position: "top"
+        });
+        toast.present();
+    }
 
 }

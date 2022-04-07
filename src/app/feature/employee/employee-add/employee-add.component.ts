@@ -59,7 +59,7 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
                     Validators.required,
                     Validators.minLength(3),
                     Validators.maxLength(120),
-                    Validators.pattern("^[a-zA-Z0-9_]*$")
+                    Validators.pattern("^[a-zA-Z0-9_-]*$")
                 ]
             }),
             email: new FormControl(null, {
@@ -124,11 +124,6 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
             this.invalidPassword = true;
             return;
         }
-        // const isDuplicate = this.employeeList.find((e: IEmployee) => e.name === formData.name);
-        // if (isDuplicate) {
-        //     this.employeeForm.controls.name.setErrors({duplicate: true});
-        //     return;
-        // }
         const newEmployee: any = {
             username: formData.userName,
             password: formData.password,
@@ -149,7 +144,7 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
                 this.step1 = false;
                 this.step2 = true;
                 loadingEl.dismiss();
-                this.showToast("Profile data is saved successfully!");
+                this.showToast("Employee is created successfully!");
             },
             errorRes => {
                 loadingEl.dismiss();
@@ -176,14 +171,12 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
             "gender": formData.gender,
             "marital_status": formData.maritalStatus
         };
-        console.log(employeeProfile);
         this.loadingCtrl.create({
             message: "Saving profile data",
         }).then(loadingEl => {
             loadingEl.present();
             const saveProfileSub = this.userService.saveProfileData(this.userData.id, employeeProfile).subscribe(
                 (response: any) => {
-                    console.log(response);
                     this.userProfileData = response;
                     loadingEl.dismiss();
                     this.showToast("Profile data is saved successfully!");
@@ -206,7 +199,8 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
         const toast = await this.toastCtrl.create({
             message: message,
             duration: 2000,
-            position: "top"
+            position: "top",
+            color: "success"
         });
         toast.present();
     }

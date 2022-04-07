@@ -6,6 +6,7 @@ import { Platform, ModalController, IonItemSliding } from '@ionic/angular';
 import { CustomerService } from 'app-services';
 import { Customer } from 'app-models';
 import { AddCustomerComponent } from './add-customer/add-customer.component';
+import { UserProfileComponent } from 'app-components';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { AddCustomerComponent } from './add-customer/add-customer.component';
 export class CustomersPage implements OnInit, OnDestroy {
 
     subscriptions: Subscription[];
-  	customers: Customer[];
+  	customers: any[];
 	platforms: string[];
 	isDesktop: boolean;
 
@@ -27,7 +28,7 @@ export class CustomersPage implements OnInit, OnDestroy {
 		private router: Router,
     	private customerService: CustomerService,
 		private platform: Platform,
-		private modalController: ModalController
+		private modalCtrl: ModalController
 	) {
 		this.platforms = this.platform.platforms();
 		this.isDesktop = this.platforms.includes('desktop');
@@ -52,13 +53,17 @@ export class CustomersPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        const getCustomersSub = this.customerService.getCustomers().subscribe(
+        this.getCustomers();
+    }
+
+	getCustomers() {
+		const getCustomersSub = this.customerService.getCustomers().subscribe(
             (response: any) => {
                 this.customers = response;
             },
         );
         this.subscriptions.push(getCustomersSub);
-    }
+	}
 
 	onFilterCustomers() {}
 
@@ -70,7 +75,7 @@ export class CustomersPage implements OnInit, OnDestroy {
 	}
 
 	addCustomer() {
-		this.modalController.create({
+		this.modalCtrl.create({
 			component: AddCustomerComponent,
 			id: 'customer-add-modal'
 		}).then((modalEl: HTMLIonModalElement) => {
@@ -78,31 +83,32 @@ export class CustomersPage implements OnInit, OnDestroy {
 			return modalEl.onDidDismiss();
 		}).then((resultData: any) => {
 			if (resultData && resultData.role === 'confirm') {
-				this.customers.push(resultData.data);
-				this.customerService.updateCustomers(this.customers);
+				this.getCustomers();
 			}
 		});
     }
 
-    onEditCustomer(customerData: Customer, slidingItem?: IonItemSliding) {
+    onEditCustomer(customerData: any, slidingItem?: IonItemSliding) {
         if (!customerData) { return; }
 		if (slidingItem) {
 			slidingItem.close();
 		}
-        this.modalController.create({
-			component: AddCustomerComponent,
+		this.modalCtrl.create({
+            component: UserProfileComponent,
             componentProps: {
-                loadedCustomer: customerData,
+                userList: this.customers ? this.customers : [],
+                operationType: 'update',
+                loadedUser: customerData,
             },
-			id: 'customer-add-modal'
-		}).then((modalEl: HTMLIonModalElement) => {
-			modalEl.present();
-			return modalEl.onDidDismiss();
-		}).then((resultData: any) => {
-            if (resultData && resultData.role === 'confirm') {
-                this.customers = resultData.data;
+            id: 'user-profile-modal'
+        }).then((modalEl: HTMLIonModalElement) => {
+            modalEl.present();
+            return modalEl.onDidDismiss() ;
+        }).then((resultData: any) => {
+            if (resultData.role === "confirm" && resultData.data) {
+                this.getCustomers();
             }
-		});
+        });
     }
 
 }

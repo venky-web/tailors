@@ -47,7 +47,6 @@ export class EmployeePage implements OnInit {
             message: "Loading employees list"
         }).then(loadingEl => {
             const getEmployeesSub = this.userService.getUsers().subscribe((response: any) => {
-                console.log(response);
                 this.employeeList = response;
                 this.employeeService.updateEmployeeList(this.employeeList);
                 loadingEl.dismiss();
@@ -72,33 +71,10 @@ export class EmployeePage implements OnInit {
             },
             id: 'emp-add-modal'
         }).then((modalEl: HTMLIonModalElement) => {
-            console.dir(modalEl);
             modalEl.present();
             return modalEl.onDidDismiss() ;
         }).then((resultData: any) => {
-            console.log(resultData);
-        });
-    }
-
-    editEmployeeProfile(employeeId: number) {
-        const employeeData = this.employeeList.find((x: any) => x.id === employeeId);
-        if (!employeeData) {
-            return;
-        }
-        this.modalController.create({
-            component: EmployeeAddComponent,
-            componentProps: {
-                employeeList: this.employeeList ? this.employeeList : [],
-                operationType: 'edit',
-                employeeData: employeeData,
-            },
-            id: 'emp-add-modal'
-        }).then((modalEl: HTMLIonModalElement) => {
-            console.dir(modalEl);
-            modalEl.present();
-            return modalEl.onDidDismiss() ;
-        }).then((resultData: any) => {
-            console.log(resultData);
+            this.getEmployees();
         });
     }
 

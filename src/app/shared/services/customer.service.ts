@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { environment } from 'src/environments/environment.prod';
 import { Customer } from '../models';
+import { CommonService } from './common.service';
 
 
 @Injectable({
@@ -20,6 +21,7 @@ export class CustomerService {
 
 	constructor(
 		private http: HttpClient,
+		private commonService: CommonService,
 	) {
 		this.envKeys = environment;
 	}
@@ -34,31 +36,9 @@ export class CustomerService {
 	}
 
 	getCustomers() {
-		return this.http.get<{[key: string]: Customer}>(`${this.envKeys.fireBaseAPI}customers.json`)
-		.pipe(
-			map(resData => {
-				const customers = [] as Customer[];
-				for (const key in resData) {
-					if (resData.hasOwnProperty(key)) {
-						const customer: Customer = {
-							id: key,
-							name: resData[key].name,
-							mobileNumber: resData[key].mobileNumber,
-							gender: resData[key].gender,
-							status: resData[key].status,
-							createdDate: resData[key].createdDate,
-							updatedDate: resData[key].updatedDate,
-							address: resData[key].address,
-						};
-						customers.push(customer);
-					}
-				}
-				return customers;
-			}),
-			tap(customers => {
-				this.updateCustomers(customers);
-			})
-		);
+		return this.http.get(
+            `${this.commonService.accountServiceUrl}business/customers/`
+        );
 	}
 
 	getCustomerDetails(id: string) {

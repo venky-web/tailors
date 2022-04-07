@@ -14,6 +14,11 @@
   
 <ion-content>
     <ng-container *ngIf="!isDesktop">
+		<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button (click)="addCustomer()">
+                <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
 		<div class="search-section">
 			<ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
 			<div class="filter-section">
@@ -34,12 +39,20 @@
 				<ion-item (click)="goToCustomerDetails(customer.id, slidingItem)"
 					lines="none" detail button>
 					<ion-avatar slot="start">
-						<img src="./assets/images/man.png" *ngIf="customer.gender === 'male'">
-						<img src="./assets/images/woman.png" *ngIf="customer.gender === 'female'">
+						<img src="./assets/images/man.png"
+							*ngIf="customer.profile && customer.profile.gender === 'male'">
+						<img src="./assets/images/woman.png"
+							*ngIf="!customer.profile || customer.profile.gender === 'female'">
 					</ion-avatar>
 					<ion-label>
-						<h3 class="customer-name">{{customer?.name}}</h3>
-						<span>{{customer?.mobileNumber}}</span>
+						<ng-container *ngIf="!customer.profile">
+							<h3>{{customer.username}}</h3>
+							<span>{{customer.email}}</span>
+						</ng-container>
+						<ng-container *ngIf="customer?.profile">
+							<h3>{{customer.profile.display_name ? customer.profile.display_name : customer.profile.full_name}}</h3>
+							<span>{{customer.profile.phone}}</span>
+						</ng-container>
 					</ion-label>
 				</ion-item>
 			</ion-item-sliding>
@@ -76,21 +89,33 @@
 								<ng-template pTemplate="body" let-data let-columns="columns">
 									<tr>
 										<td>
-											<ng-container *ngIf="data.gender === 'male'">
-												<ion-avatar>
-													<img src="./assets/images/man.png" />
-												</ion-avatar>
+											<ion-avatar slot="start">
+												<img src="./assets/images/man.png"
+													*ngIf="data.profile && data.profile.gender === 'male'">
+												<img src="./assets/images/woman.png"
+													*ngIf="!data.profile || data.profile.gender === 'female'">
+											</ion-avatar>
+										</td>
+										<td>
+											<ng-container *ngIf="data.profile; else userName">
+												<ng-container *ngIf="data.profile.display_name; else fullName">
+													{{data.profile.display_name | titlecase}}
+												</ng-container>
+												<ng-template #fullName>{{data.profile.full_name | titlecase}}</ng-template>
 											</ng-container>
-											<ng-container *ngIf="data.gender === 'female'">
-												<ion-avatar>
-													<img src="./assets/images/woman.png" />
-												</ion-avatar>
+											<ng-template #userName>{{data.username | titlecase}}</ng-template>
+										</td>
+										<td>
+											<ng-container *ngIf="data.profile">
+												{{data.profile.phone}}
 											</ng-container>
 										</td>
-										<td>{{data.name | titlecase}}</td>
-										<td>{{data.mobileNumber}}</td>
-										<td>{{data.address}}</td>
-										<td>{{data.status | titlecase}}</td>
+										<td>
+											<ng-container *ngIf="data.profile">
+												{{data.profile.address}}
+											</ng-container>
+										</td>
+										<td>{{data.is_active ? 'Active' : 'Inactive'}}</td>
 										<td>
 											<ion-button (click)="onEditCustomer(data)"
 												slot="icon-only" fill="clear" color="medium">
