@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController, LoadingController } from '@ionic/angular';
 
 import { User } from 'app-models';
-import { AuthService } from 'app-services';
+import { AuthService, UserService } from 'app-services';
 
 
 @Component({
@@ -12,18 +12,26 @@ import { AuthService } from 'app-services';
 })
 export class AccountPage implements OnInit {
 
-	userDetails: User;
+	userDetails: any;
+	profileData: any;
 
 	constructor(
 		private authService: AuthService,
+		private userService: UserService,
 		private alertController: AlertController,
 		private loadingController: LoadingController,
-	) { }
+	) {
+		this.userDetails = {};
+		this.profileData = {};
+	}
 
-	ngOnInit() {
-		this.authService.user.subscribe((value: User) => {
-			this.userDetails = value;
-		});
+	ngOnInit() {}
+	
+	ionViewWillEnter() {
+		this.userDetails = this.userService.user;
+		if (this.userDetails) {
+			this.profileData = this.userDetails.profile;
+		}
 	}
 
 	onLogout() {

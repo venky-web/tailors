@@ -179,48 +179,48 @@ export class AuthPage implements OnInit, OnDestroy {
 		this.userService.setRefreshToken(response.refresh_token);
 	}
 
-	getUserData(idToken: string, refreshToken?: string, expiresIn?: string) {
-		const getUserDataSub = this.authService.getUserProfile(idToken).subscribe(
-			(response: any) => {
-				const userData = response.users[0];
-				this.authService.setUser({
-					...userData,
-					idToken,
-					photoUrl: null,
-					refreshToken,
-					expiresIn,
-				});
-				this.loadingController.dismiss(null, null, 'login-spinner');
-				this.navigateToHomePage();
-			},
-			errorRes => {
-				this.loadingController.dismiss(null, null, 'login-spinner');
-				this.showErrorAlert(errorRes);
-			}
-		);
-		this.subscriptions.push(getUserDataSub);
-	}
+	// getUserData(idToken: string, refreshToken?: string, expiresIn?: string) {
+	// 	const getUserDataSub = this.authService.getUserProfile(idToken).subscribe(
+	// 		(response: any) => {
+	// 			const userData = response.users[0];
+	// 			this.authService.setUser({
+	// 				...userData,
+	// 				idToken,
+	// 				photoUrl: null,
+	// 				refreshToken,
+	// 				expiresIn,
+	// 			});
+	// 			this.loadingController.dismiss(null, null, 'login-spinner');
+	// 			this.navigateToHomePage();
+	// 		},
+	// 		errorRes => {
+	// 			this.loadingController.dismiss(null, null, 'login-spinner');
+	// 			this.showErrorAlert(errorRes);
+	// 		}
+	// 	);
+	// 	this.subscriptions.push(getUserDataSub);
+	// }
 
-	updateUserProfile(data: any, refreshToken?: string, expiresIn?: string) {
-		const updateUserProfileSub = this.authService.updateProfile(data).subscribe(
-			(response: any) => {
-				this.authService.setUser({
-					...response,
-					idToken: data.idToken,
-					photoUrl: null,
-					refreshToken,
-					expiresIn,
-				});
-				this.loadingController.dismiss(null, null, 'sign-up-spinner');
-				this.navigateToHomePage();
-			},
-			errorRes => {
-				this.loadingController.dismiss(null, null, 'sign-up-spinner');
-				this.showErrorAlert(errorRes);
-			}
-		);
-		this.subscriptions.push(updateUserProfileSub);
-	}
+	// updateUserProfile(data: any, refreshToken?: string, expiresIn?: string) {
+	// 	const updateUserProfileSub = this.authService.updateProfile(data).subscribe(
+	// 		(response: any) => {
+	// 			this.authService.setUser({
+	// 				...response,
+	// 				idToken: data.idToken,
+	// 				photoUrl: null,
+	// 				refreshToken,
+	// 				expiresIn,
+	// 			});
+	// 			this.loadingController.dismiss(null, null, 'sign-up-spinner');
+	// 			this.navigateToHomePage();
+	// 		},
+	// 		errorRes => {
+	// 			this.loadingController.dismiss(null, null, 'sign-up-spinner');
+	// 			this.showErrorAlert(errorRes);
+	// 		}
+	// 	);
+	// 	this.subscriptions.push(updateUserProfileSub);
+	// }
 
 	showErrorAlert(errorRes: any) {
 		console.log(errorRes);

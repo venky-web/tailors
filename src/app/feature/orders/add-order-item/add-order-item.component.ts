@@ -48,13 +48,13 @@ export class AddOrderItemComponent implements OnInit, OnDestroy {
 		if (this.loadedOrderItem) {
 			this.patchForm(this.loadedOrderItem);
 		}
-		this.authService.user.pipe(take(1)).subscribe(
-			(user: any) => {
-				if (user) {
-					this.userDetails = user;
-				}
-			}
-		);
+		// this.authService.user.pipe(take(1)).subscribe(
+		// 	(user: any) => {
+		// 		if (user) {
+		// 			this.userDetails = user;
+		// 		}
+		// 	}
+		// );
 	}
 
 	ngOnDestroy() {

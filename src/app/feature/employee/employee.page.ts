@@ -46,7 +46,7 @@ export class EmployeePage implements OnInit {
         this.loadingCtrl.create({
             message: "Loading employees list"
         }).then(loadingEl => {
-            const getEmployeesSub = this.userService.getUsers().subscribe((response: any) => {
+            const getEmployeesSub = this.userService.getBusinessStaffList().subscribe((response: any) => {
                 this.employeeList = response;
                 this.employeeService.updateEmployeeList(this.employeeList);
                 loadingEl.dismiss();

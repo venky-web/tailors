@@ -7,12 +7,12 @@ export interface FeatureCard {
 }
 
 export const FEATURES_LIST: FeatureCard[] = [
-    {
-        name: 'Orders',
-        iconUrl: './assets/app-icons/orders.png',
-        routeUrl: '/orders',
-        hasAccess: true,
-    },
+    // {
+    //     name: 'Orders',
+    //     iconUrl: './assets/app-icons/orders.png',
+    //     routeUrl: '/orders',
+    //     hasAccess: true,
+    // },
     // {
     //     name: 'Reports',
     //     iconUrl: './assets/app-icons/reports.png',

@@ -59,7 +59,7 @@ export class EmployeeDetailPage implements OnInit {
             message: "Loading employee data"
         }).then(loadingEl => {
             loadingEl.present();
-            this.getEmployeeDataSub = this.userService.getUserDetails(this.employeeId).subscribe(
+            this.getEmployeeDataSub = this.userService.getStaffDetails(this.employeeId).subscribe(
                 (response: any) => {
                     this.employeeData = response;
                     this.employeeProfile = this.employeeData ? this.employeeData.profile : null;

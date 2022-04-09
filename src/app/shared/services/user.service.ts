@@ -88,12 +88,18 @@ export class UserService {
 
 	createBusinessStaff(userData: any) {
 		return this.http.post(
-            `${this.commonService.accountServiceUrl}`,
+            `${this.commonService.accountServiceUrl}business/staff/`,
             userData
         );
 	}
 
-    getUsers() {
+    getBusinessStaffList() {
+		return this.http.get(
+            `${this.commonService.accountServiceUrl}business/staff/`
+        );
+	}
+
+    getCustomerList() {
         return this.http.get(
             `${this.commonService.accountServiceUrl}`
         );
@@ -102,6 +108,12 @@ export class UserService {
     getUserDetails(userId: any) {
         return this.http.get(
             `${this.commonService.accountServiceUrl}${userId}/`
+        );
+    }
+
+    getStaffDetails(userId: any) {
+        return this.http.get(
+            `${this.commonService.accountServiceUrl}business/staff/${userId}/`
         );
     }
 
@@ -140,6 +152,13 @@ export class UserService {
     saveProfileData(userId: any, profileData: any) {
         return this.http.put(
             `${this.commonService.accountServiceUrl}profile/${userId}/`,
+            profileData
+        );
+    }
+
+    saveStaffProfileData(userId: any, profileData: any) {
+        return this.http.put(
+            `${this.commonService.accountServiceUrl}business/staff/${userId}/profile/`,
             profileData
         );
     }

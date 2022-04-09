@@ -16,32 +16,49 @@
 	<ion-grid>
 		<ion-row>
 			<ion-col size="12" sizeSm="4" offsetSm="4" class="ion-text-center">
-				<img [src]="userDetails.photoUrl" class="user-img"
-					*ngIf="userDetails?.photoUrl"/>
-				<img src="./assets/images/user.png" class="user-img"
-					*ngIf="!userDetails.photoUrl"/>
+				<img src="./assets/images/man.png" height="226px"
+					*ngIf="profileData && profileData.gender === 'male'">
+				<img src="./assets/images/woman.png" height="226px"
+					*ngIf="!profileData || profileData.gender === 'female'">
 			</ion-col>
 		</ion-row>
 		<ion-row>
 			<ion-col size="12" class="user-details">
 				<div class="header">Name</div>
-				<div class="value">{{
-					userDetails && userDetails.displayName ? userDetails.displayName : 'Please add a name'
-				}}</div>
+				<ng-container *ngIf="profileData; else emptyNameBlock">
+					<div class="value">
+						{{ profileData.display_name ? profileData.display_name : profileData.full_name}}
+					</div>
+				</ng-container>
+				<ng-template #emptyNameBlock>
+					<div class="value">Please add your name</div>
+				</ng-template>
 			</ion-col>
 		</ion-row>
 		<ion-row>
 			<ion-col size="12" class="user-details">
 				<div class="header">Email</div>
-				<div class="value">{{
-					userDetails && userDetails.email ? userDetails.email : 'Please add an email'
-				}}</div>
+				<ng-container *ngIf="userDetails; else emptyEmailBlock">
+					<div class="value">
+						{{ userDetails.email ? userDetails.email : 'Please add your email'}}
+					</div>
+				</ng-container>
+				<ng-template #emptyEmailBlock>
+					<div class="value">Please add your email</div>
+				</ng-template>
 			</ion-col>
 		</ion-row>
 		<ion-row>
 			<ion-col size="12" class="user-details">
 				<div class="header">Mobile Number</div>
-				<div class="value not-found">Please add a mobile Number</div>
+				<ng-container *ngIf="profileData; else emptyNumberBlock">
+					<div class="value">
+						{{ profileData.phone ? profileData.email : 'Please add your number'}}
+					</div>
+				</ng-container>
+				<ng-template #emptyNumberBlock>
+					<div class="value">Please add your number</div>
+				</ng-template>
 			</ion-col>
 		</ion-row>
 	</ion-grid>

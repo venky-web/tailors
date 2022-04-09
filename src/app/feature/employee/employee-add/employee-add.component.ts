@@ -175,7 +175,7 @@ export class EmployeeAddComponent implements OnInit, OnDestroy {
             message: "Saving profile data",
         }).then(loadingEl => {
             loadingEl.present();
-            const saveProfileSub = this.userService.saveProfileData(this.userData.id, employeeProfile).subscribe(
+            const saveProfileSub = this.userService.saveStaffProfileData(this.userData.id, employeeProfile).subscribe(
                 (response: any) => {
                     this.userProfileData = response;
                     loadingEl.dismiss();

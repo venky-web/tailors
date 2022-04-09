@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Platform, ModalController, IonItemSliding } from '@ionic/angular';
 
-import { CustomerService } from 'app-services';
-import { Customer } from 'app-models';
+import { UserService } from 'app-services';
 import { AddCustomerComponent } from './add-customer/add-customer.component';
 import { UserProfileComponent } from 'app-components';
 
@@ -26,9 +25,9 @@ export class CustomersPage implements OnInit, OnDestroy {
 
 	constructor(
 		private router: Router,
-    	private customerService: CustomerService,
 		private platform: Platform,
-		private modalCtrl: ModalController
+		private modalCtrl: ModalController,
+		private userService: UserService,
 	) {
 		this.platforms = this.platform.platforms();
 		this.isDesktop = this.platforms.includes('desktop');
@@ -57,7 +56,7 @@ export class CustomersPage implements OnInit, OnDestroy {
     }
 
 	getCustomers() {
-		const getCustomersSub = this.customerService.getCustomers().subscribe(
+		const getCustomersSub = this.userService.getCustomerList().subscribe(
             (response: any) => {
                 this.customers = response;
             },
