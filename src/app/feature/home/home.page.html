@@ -4,9 +4,9 @@
             <ion-menu-button menu="main"></ion-menu-button>
         </ion-buttons>
         <ion-title>MTailors</ion-title>
-        <ion-buttons slot="end">
-            <ion-button slot="icon-only">
-                <ion-icon name="person-circle-outline"></ion-icon>
+        <ion-buttons slot="primary">
+            <ion-button slot="icon-only" (click)="onClickTile('/account')">
+                <img class="icon-32" src="./assets/app-icons/user.png" alt="User">
             </ion-button>
         </ion-buttons>
     </ion-toolbar>

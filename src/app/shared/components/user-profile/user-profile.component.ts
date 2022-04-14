@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import * as moment from "moment";
+import { cloneDeep } from 'lodash';
 
 import { UserService } from 'app-services';
 
@@ -18,6 +19,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     @Input() userList: any[];
     @Input() operationType: 'add' | 'update';
     @Input() loadedUser: any;
+    @Input() featureName: string;
 
     subscriptions: Subscription[];
     profileForm: FormGroup;
@@ -111,6 +113,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             "gender": formData.gender,
             "marital_status": formData.maritalStatus
         };
+        if (this.featureName === "emp") {
+            this.saveStaffProfile(userProfile);
+        } else {
+            this.saveUserProfile(userProfile);
+        }
+    }
+
+    saveUserProfile(userProfile: any) {
         this.loadingCtrl.create({
             message: "Saving profile data",
         }).then(loadingEl => {
@@ -119,10 +129,38 @@ export class UserProfileComponent implements OnInit, OnDestroy {
                 (response: any) => {
                     loadingEl.dismiss();
                     this.showToast("Profile data saved successfully!");
+                    const userData = cloneDeep(this.loadedUser);
+                    userData.profile = response;
                     const modelData = {
                         name: "user-profile",
-                        userData: response,
-                        profileData: response.profile,
+                        userData: userData,
+                        profileData: response,
+                    }
+                    this.modalCtrl.dismiss(modelData, 'confirm', 'user-profile-modal');
+                },
+                errorRes => {
+                    loadingEl.dismiss();
+                }
+            );
+            this.subscriptions.push(saveProfileSub);
+        });
+    }
+
+    saveStaffProfile(userProfile: any) {
+        this.loadingCtrl.create({
+            message: "Saving profile data",
+        }).then(loadingEl => {
+            loadingEl.present();
+            const saveProfileSub = this.userService.saveStaffProfileData(this.loadedUser.id, userProfile).subscribe(
+                (response: any) => {
+                    loadingEl.dismiss();
+                    this.showToast("Profile data saved successfully!");
+                    const userData = cloneDeep(this.loadedUser);
+                    userData.profile = response;
+                    const modelData = {
+                        name: "user-profile",
+                        userData: userData,
+                        profileData: response,
                     }
                     this.modalCtrl.dismiss(modelData, 'confirm', 'user-profile-modal');
                 },

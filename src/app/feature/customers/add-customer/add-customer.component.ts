@@ -7,6 +7,7 @@ import * as moment from "moment";
 
 import { IEmployee } from 'app-models';
 import { UserService } from 'app-services';
+import { cloneDeep } from 'lodash';
 
 
 @Component({
@@ -136,9 +137,9 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
         }).then(loadingEl => {
             loadingEl.present();
             const addEmpSub = this.userService.createUser(newCustomer).subscribe((response: any) => {
-                this.usersList = response;
+                this.userData = response;
                 if (this.usersList && this.usersList.length > 0) {
-                    this.userData = this.usersList.find((x: any) => x.username === formData.userName);
+                    this.usersList.push(this.userData);
                 }
                 loadingEl.dismiss();
                 this.showToast("User is created successfully!");
@@ -183,13 +184,14 @@ export class AddCustomerComponent implements OnInit, OnDestroy {
             loadingEl.present();
             const saveProfileSub = this.userService.saveProfileData(this.userData.id, employeeProfile).subscribe(
                 (response: any) => {
-                    this.userProfileData = response;
+                    const userData = cloneDeep(this.userData);
+                    userData.profile = response;
                     loadingEl.dismiss();
                     this.showToast("Profile data is saved successfully!");
                     const modelData = {
-                        name: "emp",
-                        userData: this.userData,
-                        profileData: this.userProfileData,
+                        name: "customer",
+                        userData: userData,
+                        profileData: response,
                     }
                     this.modalCtrl.dismiss(modelData, 'confirm', 'customer-add-modal');
                 },

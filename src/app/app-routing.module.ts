@@ -44,6 +44,11 @@ const routes: Routes = [
         canLoad: [AuthGuard]
       },
       {
+        path: 'requests',
+        loadChildren: () => import('./feature/requests/requests.module').then( m => m.RequestsPageModule),
+        canLoad: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full'

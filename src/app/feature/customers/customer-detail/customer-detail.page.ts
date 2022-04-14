@@ -40,22 +40,23 @@ export class CustomerDetailPage implements OnInit {
 
     ngOnInit() {
         this.customerId = +this.activateRoute.snapshot.paramMap.get('customerId');
+    }
+
+    ionViewWillEnter() {
         this.customerService.customers.subscribe((list: any[]) => {
             this.customerList = list;
             if (list && list.length > 0) {
                 this.customerData = list.find((e: any) => e.id === this.customerId);
                 this.customerProfile = this.customerData ? this.customerData.profile : null;
-            } else {
-                if (!this.getCustomerDataSub) {
-                    this.getEmployeeData();
-                }
+            } else if (!this.getCustomerDataSub) {
+                this.getCustomerDetails();
             }
         });
     }
 
-    getEmployeeData() {
+    getCustomerDetails() {
         this.loadingCtrl.create({
-            message: "Loading employee data"
+            message: "Loading user data"
         }).then(loadingEl => {
             loadingEl.present();
             this.getCustomerDataSub = this.userService.getUserDetails(this.customerId).subscribe(
@@ -83,7 +84,7 @@ export class CustomerDetailPage implements OnInit {
         this.tabIndex = index;
     }
 
-    onEditEmployee() {
+    onEditCustomer() {
         this.modalCtrl.create({
             component: UserProfileComponent,
             componentProps: {

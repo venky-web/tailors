@@ -163,4 +163,10 @@ export class UserService {
         );
     }
 
+    getRelationRequests() {
+        return this.http.get(
+            `${this.commonService.accountServiceUrl}business/requests/`
+        );
+    }
+
 }

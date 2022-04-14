@@ -91,6 +91,7 @@ export class EmployeeDetailPage implements OnInit {
                 userList: this.employeeList ? this.employeeList : [],
                 operationType: 'update',
                 loadedUser: this.employeeData,
+                featureName: "emp",
             },
             id: 'user-profile-modal'
         }).then((modalEl: HTMLIonModalElement) => {

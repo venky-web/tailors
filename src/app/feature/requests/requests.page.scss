@@ -1,0 +1,19 @@
+.status-count-cell {
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    font-size: 1.2rem;
+
+    &.pending-cell {
+        background-color: var(--ion-color-secondary-tint);
+        color: #000;
+    }
+
+    &.declined-cell {
+        background-color: var(--ion-color-danger-tint);
+    }
+}

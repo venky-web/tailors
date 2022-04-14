@@ -4,9 +4,9 @@
 			<ion-back-button defaultHref="/home"></ion-back-button>
 		</ion-buttons>
 		<ion-title>My Account</ion-title>
-		<ion-buttons slot="primary">
-			<ion-button (click)="onLogout()" slot="icon-only" color="danger">
-				<ion-icon name="power"></ion-icon>
+		<ion-buttons slot="primary" *ngIf="userDetails && userDetails.user_role !== 'business_staff'">
+			<ion-button (click)="onEditUserData()" slot="icon-only">
+				<ion-icon name="create"></ion-icon>
 			</ion-button>
 		</ion-buttons>
 	</ion-toolbar>
@@ -31,35 +31,64 @@
 					</div>
 				</ng-container>
 				<ng-template #emptyNameBlock>
-					<div class="value">Please add your name</div>
+					<div class="value empty-value">Please add your name</div>
 				</ng-template>
 			</ion-col>
 		</ion-row>
 		<ion-row>
 			<ion-col size="12" class="user-details">
 				<div class="header">Email</div>
-				<ng-container *ngIf="userDetails; else emptyEmailBlock">
+				<ng-container *ngIf="userDetails && userDetails.email; else emptyEmailBlock">
 					<div class="value">
-						{{ userDetails.email ? userDetails.email : 'Please add your email'}}
+						{{userDetails?.email}}
 					</div>
 				</ng-container>
 				<ng-template #emptyEmailBlock>
-					<div class="value">Please add your email</div>
+					<div class="value empty-value">Please add your email</div>
 				</ng-template>
 			</ion-col>
 		</ion-row>
 		<ion-row>
 			<ion-col size="12" class="user-details">
 				<div class="header">Mobile Number</div>
-				<ng-container *ngIf="profileData; else emptyNumberBlock">
-					<div class="value">
-						{{ profileData.phone ? profileData.email : 'Please add your number'}}
-					</div>
+				<ng-container *ngIf="profileData && profileData.phone; else emptyNumberBlock">
+					<div class="value">{{profileData?.phone}}</div>
 				</ng-container>
 				<ng-template #emptyNumberBlock>
-					<div class="value">Please add your number</div>
+					<div class="value empty-value">Please add your number</div>
 				</ng-template>
 			</ion-col>
 		</ion-row>
 	</ion-grid>
+	<ng-container *ngIf="businessData">
+		<ion-grid>
+			<ion-row>
+				<ion-col size="12">
+					<h4>Business Data</h4>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col size="12" class="user-details">
+					<div class="header">Business Name</div>
+					<ng-container *ngIf="businessData?.name; else emptyNameBlock">
+						<div class="value">{{businessData?.name}}</div>
+					</ng-container>
+					<ng-template #emptyNameBlock>
+						<div class="value empty-value">Please business name</div>
+					</ng-template>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col size="12" class="user-details">
+					<div class="header">Staff Count</div>
+					<div class="value">
+						{{ businessData?.staff_count ? businessData.staff_count : 'N/A'}}
+					</div>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</ng-container>
+	<ion-button (click)="onLogout()" expand="block" fill="clear">
+		Logout
+	</ion-button>
 </ion-content>

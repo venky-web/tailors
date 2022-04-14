@@ -1,0 +1,36 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Requests</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid fixed>
+        <ion-row>
+            <ion-col size="12">
+                <ion-searchbar class="ion-no-padding" showCancelButton="focus"></ion-searchbar>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="12" sizeSm="6">
+                <section class="status-count-cell pending-cell">
+                    <span>Pending</span>
+                    <ion-badge slot="end" color="secondary">
+                        {{pendingRequests ? pendingRequests.length : '0'}}
+                    </ion-badge>
+                </section>
+            </ion-col>
+            <ion-col size="12" sizeSm="6">
+                <section class="status-count-cell declined-cell">
+                    <span>Declined</span>
+                    <ion-badge slot="end" color="danger">
+                        {{declinedRequests ? declinedRequests.length : '0'}}
+                    </ion-badge>
+                </section>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

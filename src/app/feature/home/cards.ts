@@ -35,4 +35,10 @@ export const FEATURES_LIST: FeatureCard[] = [
     //     iconUrl: './assets/app-icons/suppliers.png',
     //     routeUrl: '/vendors'
     // },
+    {
+        name: 'Requests',
+        iconUrl: './assets/app-icons/add-user.png',
+        routeUrl: '/requests',
+        hasAccess: true,
+    },
 ];
