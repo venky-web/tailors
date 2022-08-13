@@ -1,0 +1,24 @@
+form {
+    padding: 8px;
+}
+.gender-section {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+}
+
+.emp-form-section {
+    padding: 0.8rem;
+}
+
+.form-header {
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 8px;
+}
+
+.profile-btn-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

@@ -4,56 +4,137 @@
             <ion-back-button defaultHref="home"></ion-back-button>
         </ion-buttons>
         <ion-title>Employees List</ion-title>
+        <ion-buttons slot="end" *ngIf="!isDesktop">
+            <ion-button (click)="addEmployee()" slot="icon-only" color="primary">
+                <ion-icon name="add-circle-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
-<!-- fab placed in the center of the content with a list on each side -->
-    <ng-container *ngIf="!isDesktop">
+    <ng-container *ngIf="!isDesktop; else empTable">
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
             <ion-fab-button (click)="addEmployee()">
                 <ion-icon name="add"></ion-icon>
             </ion-fab-button>
         </ion-fab>
+		<div class="search-section">
+			<ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+			<div class="filter-section">
+				<ion-button (click)="onFilterEmployees()" fill="clear"
+					slot="icon-only">
+					<ion-icon name="filter"></ion-icon>
+				</ion-button>
+			</div>
+		</div>
+		<ion-list class="employees-list">
+			<ion-item-sliding *ngFor="let employee of employeeList" #slidingItem>
+				<ion-item-options side="start">
+					<ion-item-option color="primary" (click)="onEditEmployee(employee, slidingItem)">
+						<ion-icon slot="top" name="create"></ion-icon>
+						Edit
+					</ion-item-option>
+				</ion-item-options>
+				<ion-item-options side="end">
+					<ion-item-option color="danger" (click)="onDeleteEmployee(employee._id, slidingItem)">
+						<ion-icon slot="top" name="trash"></ion-icon>
+						Delete
+					</ion-item-option>
+				</ion-item-options>
+				<ion-item (click)="goToEmployeeDetails(employee._id, slidingItem)"
+					lines="none" detail button>
+					<ion-avatar slot="start">
+						<img src="./assets/images/man.png"
+							*ngIf="employee.gender && employee.gender === 'male'">
+						<img src="./assets/images/woman.png"
+							*ngIf="!employee.gender || employee.gender === 'female'">
+					</ion-avatar>
+					<ion-label>
+						<h3 class="" *ngIf="employee.display_name; else fullName">{{employee.display_name | titlecase}}</h3>
+						<ng-template #fullName>
+							<h3 class="f-16">{{employee.full_name | titlecase}}</h3>
+						</ng-template>
+						<span class="f-14">{{employee.phone}}</span>
+					</ion-label>
+				</ion-item>
+			</ion-item-sliding>
+		</ion-list>
     </ng-container>
-    <ion-grid class="list-grid">
-        <ion-row class="b-bottom">
-            <ion-col class="filter-section">
-                <input type="text" class="form-control" placeholder="Search">
-                <ion-button class="icon-only" fill="clear" size="small">
-                    <ion-icon name="filter"></ion-icon>
-                </ion-button>
-            </ion-col>
-            <ion-col size="6" class="btn-section ion-text-end" 
-                *ngIf="platforms.includes('desktop') || platforms.includes('tablet')">
-                <ion-button size="small" (click)="addEmployee()">Add Employee</ion-button>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col>
-                <ion-list class="employees-list">
-                    <ion-item *ngFor="let employee of employeeList"
-                        (click)="goToEmployeeDetails(employee.id)"
-                        lines="none" detail button>
-                        <ion-avatar slot="start">
-                            <img src="./assets/images/man.png"
-                                *ngIf="employee.profile && employee.profile.gender === 'male'">
-                            <img src="./assets/images/woman.png"
-                                *ngIf="!employee.profile || employee.profile.gender === 'female'">
-                        </ion-avatar>
-                        <ion-label>
-                            <ng-container *ngIf="!employee.profile">
-                                <h3>{{employee.username}}</h3>
-                                <span>{{employee.mobileNumber}}</span>
-                            </ng-container>
-                            <ng-container *ngIf="employee?.profile">
-                                <h3>{{employee.profile.display_name ? employee.profile.display_name : employee.profile.full_name}}</h3>
-                                <span>{{employee.profile.phone}}</span>
-                            </ng-container>
-                        </ion-label>
-                    </ion-item>
-                </ion-list>
-            </ion-col>
-        </ion-row>
-    </ion-grid>
 </ion-content>
+
+<ng-template #empTable>
+    <div class="main-content">
+        <div class="left-section">
+            <ion-grid>
+                <ion-row class="border-bottom ion-align-items-center">
+                    <ion-col size="3">
+                        <h4 class="ion-no-margin">Employees</h4>
+                    </ion-col>
+                    <ion-col size="6" class="ion-text-center ion-no-padding">
+                        <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+                    </ion-col>
+                    <ion-col size="3" class="ion-text-end">
+                        <ion-button (click)="addEmployee()" fill="solid">
+                            <ion-icon name="add-circle-outline"></ion-icon> 
+                            Add Employee
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col size="12">
+                        <p-table [columns]="employeeTableCols" [value]="employeeList"
+                            [paginator]="true" [rows]="10">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr>
+                                    <td>
+                                        <ion-avatar slot="start">
+                                            <img src="./assets/images/man.png"
+                                                *ngIf="data.gender && data.gender === 'male'">
+                                            <img src="./assets/images/woman.png"
+                                                *ngIf="!data.gender || data.gender === 'female'">
+                                        </ion-avatar>
+                                    </td>
+                                    <td>
+                                        <a class="f-600" (click)="goToEmployeeDetails(data._id)">{{data.full_name | titlecase}}</a>
+                                    </td>
+                                    <td>
+                                        <span>{{data.display_name | titlecase}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.phone ? data.phone : '-'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.joined_date | date}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.updated_date | date}}</span>
+                                    </td>
+                                    <td>
+                                        <ion-button (click)="onEditEmployee(data)"
+                                            slot="icon-only" fill="clear" color="medium">
+                                            <ion-icon name="create"></ion-icon>
+                                        </ion-button>
+                                        <ion-button (click)="onDeleteEmployee(data._id)"
+                                            slot="icon-only" fill="clear" color="medium">
+                                            <ion-icon name="trash"></ion-icon>
+                                        </ion-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+        <div class="right-section overview-section">
+        </div>
+    </div>
+</ng-template>

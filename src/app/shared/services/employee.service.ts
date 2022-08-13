@@ -2,9 +2,9 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject } from "rxjs";
+import { take } from "rxjs/operators";
 
 import { environment } from "src/environments/environment";
-import { CommonService } from "./common.service";
 
 
 @Injectable({
@@ -12,7 +12,7 @@ import { CommonService } from "./common.service";
 })
 export class EmployeeService {
 
-    envKeys: any;
+    env: any;
 
     private eList: BehaviorSubject<any[]> = new BehaviorSubject([]);
 
@@ -22,25 +22,45 @@ export class EmployeeService {
 
     constructor(
         private http: HttpClient,
-        private commonService: CommonService,
     ) {
-        this.envKeys = environment;
+        this.env = environment;
     }
 
     updateEmployeeList(employeeList: any[]) {
         this.eList.next(employeeList);
     }
 
-    getEmployeeList() {}
-
-    getEmployee() {}
+    getEmployees() {
+		return this.http.get(`${this.env.fireBaseAPI}employees.json`);
+	}
 
     addEmployee(newEmployee: any) {
-        return this.http.post(`${this.commonService.accountServiceUrl}`, newEmployee);
+        // return this.http.post(`${this.commonService.accountServiceUrl}`, newEmployee);
+        return this.http.post(`${this.env.fireBaseAPI}employees.json`, newEmployee)
+		.pipe(
+			take(1)
+		);
     }
 
-    updateEmployeeDetails() {}
+	getEmployeeDetails(id: string) {
+		return this.http.get(`${this.env.fireBaseAPI}employees/${id}.json`)
+		.pipe(
+			take(1)
+		);
+	}
 
-    deleteEmployee() {}
+    updateEmployeeDetails(employeeData: any, id: string) {
+        return this.http.put(`${this.env.fireBaseAPI}employees/${id}.json`, employeeData)
+		.pipe(
+			take(1)
+		);
+    }
+
+    deleteEmployee(id: string) {
+        return this.http.delete(`${this.env.fireBaseAPI}employees/${id}.json`)
+		.pipe(
+			take(1)
+		);
+    }
 
 }

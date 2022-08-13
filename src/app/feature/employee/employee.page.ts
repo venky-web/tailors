@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { LoadingController, ModalController, Platform } from '@ionic/angular';
+import { AlertController, IonItemSliding, LoadingController, ModalController, Platform, ToastController } from '@ionic/angular';
 
-import { EmployeeService, UserService } from 'app-services';
-import { EmployeeAddComponent } from './employee-add/employee-add.component';
+import { EmployeeService } from 'app-services';
+import { AddEmployeePopupComponent } from './add-employee-popup/add-employee-popup.component';
 
 
 @Component({
@@ -22,13 +22,16 @@ export class EmployeePage implements OnInit {
     isServiceCalled: boolean;
     isDesktop: boolean;
 
+    employeeTableCols: any[];
+
     constructor(
         private employeeService: EmployeeService,
         private router: Router,
         private platform: Platform,
         private modalController: ModalController,
-        private userService: UserService,
         private loadingCtrl: LoadingController,
+        private alertCtrl: AlertController,
+        private toastCtrl: ToastController,
     ) {
         this.isServiceCalled = false;
         this.platforms = this.platform.platforms();
@@ -36,7 +39,17 @@ export class EmployeePage implements OnInit {
         this.subscriptions = [];
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.employeeTableCols = [
+			{ header: 'Image' },
+			{ field: 'full_name', header: 'Full Name' },
+			{ field: 'display_name', header: 'Display Name' },
+			{ field: 'phone', header: 'Mobile' },
+			{ field: 'joined_date', header: 'Joined on' },
+			{ field: 'updated_date', header: 'Updated on' },
+			{ header: 'Actions' }
+		];
+    }
     
     ionViewWillEnter() {
         this.getEmployees();
@@ -46,9 +59,8 @@ export class EmployeePage implements OnInit {
         this.loadingCtrl.create({
             message: "Loading employees list"
         }).then(loadingEl => {
-            const getEmployeesSub = this.userService.getBusinessStaffList().subscribe((response: any) => {
-                this.employeeList = response;
-                this.employeeService.updateEmployeeList(this.employeeList);
+            const getEmployeesSub = this.employeeService.getEmployees().subscribe((response: any) => {
+                this.employeeList = this.reArrangeEmployeesList(response);
                 loadingEl.dismiss();
             },
             error => {
@@ -58,24 +70,95 @@ export class EmployeePage implements OnInit {
         });
     }
 
-    goToEmployeeDetails(id: any) {
-        this.router.navigate(['/emp', id]);
-    }
+    reArrangeEmployeesList(data: any) {
+		const employees = [];
+		for (const key in data) {
+			employees.push({...data[key], _id: key});
+		}
+		return employees;
+	}
+
+    onFilterEmployees() {}
+
+	goToEmployeeDetails(empId: any, slidingItem?: IonItemSliding) {
+		if (slidingItem) slidingItem.close();
+		this.router.navigate(['/emp', empId]);
+	}
 
     addEmployee() {
+        this.openEmployeePopup("add");
+    }
+
+    onEditEmployee(empData: any, slidingItem?: IonItemSliding) {
+        if (slidingItem) slidingItem.close();
+        this.openEmployeePopup("update", empData);
+    }
+
+    openEmployeePopup(type: string, empData?: any) {
         this.modalController.create({
-            component: EmployeeAddComponent,
+            component:  AddEmployeePopupComponent,
             componentProps: {
                 employeeList: this.employeeList ? this.employeeList : [],
-                operationType: 'add',
+                operationType: type,
+                employeeData: empData,
             },
-            id: 'emp-add-modal'
+            id: 'employee-add-popup-modal'
         }).then((modalEl: HTMLIonModalElement) => {
             modalEl.present();
-            return modalEl.onDidDismiss() ;
+            return modalEl.onDidDismiss();
         }).then((resultData: any) => {
             this.getEmployees();
         });
+    }
+
+    onDeleteEmployee(id: string, slidingItem?: IonItemSliding) {
+        if (slidingItem) slidingItem.close();
+        this.alertCtrl.create({
+            cssClass: 'my-custom-class',
+            header: 'Are you sure?',
+            message: 'Employee data will be deleted permanently.',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                },
+                {
+                    text: 'Delete',
+                    role: "confirm",
+                },
+            ],
+        }).then((alertEl: HTMLIonAlertElement) => {
+            alertEl.present();
+            return alertEl.onDidDismiss();
+        }).then((alertResult: any) => {
+            if (alertResult && alertResult.role === "confirm") {
+                this.loadingCtrl.create({
+                    message: "Deleting employee data",
+                }).then(loadingEl => {
+                    loadingEl.present();
+                    const deleteEmpSub = this.employeeService.deleteEmployee(id).subscribe(
+                        (response: any) => {
+                            loadingEl.dismiss();
+                            this.showToast("Data saved successfully!");
+                            this.getEmployees();
+                        },
+                        errorRes => {
+                            loadingEl.dismiss();
+                        }
+                    );
+                    this.subscriptions.push(deleteEmpSub);
+                });
+            }
+        });
+    }
+
+    async showToast(message: string) {
+        const toast = await this.toastCtrl.create({
+            message: message,
+            duration: 2000,
+            position: "top"
+        });
+        toast.present();
     }
 
 }

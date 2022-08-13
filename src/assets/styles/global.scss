@@ -5,6 +5,11 @@
     color: var(--text-black);
 }
 
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
 ion-grid, .page-content {
     width: auto;
     max-width: 90rem;
