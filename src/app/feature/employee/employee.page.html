@@ -51,9 +51,9 @@
 							*ngIf="!employee.gender || employee.gender === 'female'">
 					</ion-avatar>
 					<ion-label>
-						<h3 class="" *ngIf="employee.display_name; else fullName">{{employee.display_name | titlecase}}</h3>
+						<h3 class="emp-name" *ngIf="employee.display_name; else fullName">{{employee.display_name | titlecase}}</h3>
 						<ng-template #fullName>
-							<h3 class="f-16">{{employee.full_name | titlecase}}</h3>
+							<h3 class="emp-name">{{employee.full_name | titlecase}}</h3>
 						</ng-template>
 						<span class="f-14">{{employee.phone}}</span>
 					</ion-label>

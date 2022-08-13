@@ -8,6 +8,7 @@ import { TableModule } from 'primeng/table';
 import { CustomersPageRoutingModule } from './customers-routing.module';
 import { CustomersPage } from './customers.page';
 import { AddCustomerComponent } from './add-customer/add-customer.component';
+import { AddCustomerPopupComponent } from './add-customer-popup/add-customer-popup.component';
 
 
 @NgModule({
@@ -19,6 +20,6 @@ import { AddCustomerComponent } from './add-customer/add-customer.component';
     CustomersPageRoutingModule,
     TableModule,
   ],
-  declarations: [CustomersPage, AddCustomerComponent]
+  declarations: [CustomersPage, AddCustomerComponent, AddCustomerPopupComponent]
 })
 export class CustomersPageModule {}

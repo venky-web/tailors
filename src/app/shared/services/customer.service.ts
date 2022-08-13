@@ -1,12 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
 
-import { environment } from 'src/environments/environment.prod';
-import { Customer } from '../models';
-import { CommonService } from './common.service';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -14,69 +11,44 @@ import { CommonService } from './common.service';
 })
 export class CustomerService {
 
-	_customers: BehaviorSubject<Customer[]> = new BehaviorSubject([]);
-
-	private customersList: Customer[];
-	private envKeys: any;
+	private env: any;
 
 	constructor(
 		private http: HttpClient,
-		private commonService: CommonService,
 	) {
-		this.envKeys = environment;
-	}
-
-	get customers() {
-		return this._customers.asObservable();
-	}
-
-	updateCustomers(customers: Customer[]) {
-		this.customersList = customers;
-		this._customers.next(customers);
+		this.env = environment;
 	}
 
 	getCustomers() {
-		return this.http.get(
-            `${this.commonService.accountServiceUrl}business/customers/`
-        );
+		return this.http.get(`${this.env.fireBaseAPI}customers.json`);
 	}
 
 	getCustomerDetails(id: string) {
-		return this.http.get<{[key: string]: Customer}>(`${this.envKeys.fireBaseAPI}customers/${id}.json`)
-		.pipe(
-			tap(resData => {
-				console.log(resData);
-			})
-			// switchMap(resData => {
-			// 	const customer = resData[id];
-			// })
-		);
-	}
-
-	addCustomer(customer: Customer) {
-		return this.http.post<{name: string}>(`${this.envKeys.fireBaseAPI}customers.json`, customer)
+		return this.http.get(`${this.env.fireBaseAPI}customers/${id}.json`)
 		.pipe(
 			take(1)
 		);
 	}
 
-	updateCustomer(customer: Customer, id: string) {
-		return this.http.put<Customer>(`${this.envKeys.fireBaseAPI}customers/${id}.json`, customer)
+	addCustomer(customer: any) {
+		return this.http.post(`${this.env.fireBaseAPI}customers.json`, customer)
 		.pipe(
-			map(resData => {
-				const customersData = [...this.customersList];
-				const customerIndex = customersData.findIndex((c: Customer) =>
-					c.id === id
-				);
-				customersData[customerIndex] = resData;
-				customersData[customerIndex].id = id;
-				this.updateCustomers(customersData);
-				return customersData as Customer[];
-			}),
-			tap(resData => {
-				this.updateCustomers(resData);
-			})
+			take(1)
 		);
 	}
+
+	updateCustomer(customer: any, id: string) {
+		return this.http.put(`${this.env.fireBaseAPI}customers/${id}.json`, customer)
+		.pipe(
+			take(1)
+		);
+	}
+
+    deleteCustomer(id: string) {
+        return this.http.delete(`${this.env.fireBaseAPI}customers/${id}.json`)
+		.pipe(
+			take(1)
+		);
+    }
 
 }

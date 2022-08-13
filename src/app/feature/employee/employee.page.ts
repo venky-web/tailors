@@ -107,14 +107,15 @@ export class EmployeePage implements OnInit {
             modalEl.present();
             return modalEl.onDidDismiss();
         }).then((resultData: any) => {
-            this.getEmployees();
+            if (resultData.role === "confirm" && resultData.data) {
+                this.getEmployees();
+            }
         });
     }
 
     onDeleteEmployee(id: string, slidingItem?: IonItemSliding) {
         if (slidingItem) slidingItem.close();
         this.alertCtrl.create({
-            cssClass: 'my-custom-class',
             header: 'Are you sure?',
             message: 'Employee data will be deleted permanently.',
             buttons: [
@@ -139,7 +140,7 @@ export class EmployeePage implements OnInit {
                     const deleteEmpSub = this.employeeService.deleteEmployee(id).subscribe(
                         (response: any) => {
                             loadingEl.dismiss();
-                            this.showToast("Data saved successfully!");
+                            this.showToast("Employee data is deleted successfully!");
                             this.getEmployees();
                         },
                         errorRes => {

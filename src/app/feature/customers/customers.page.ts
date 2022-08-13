@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Platform, ModalController, IonItemSliding } from '@ionic/angular';
+import { Platform, ModalController, IonItemSliding, ToastController, AlertController, LoadingController } from '@ionic/angular';
 
-import { UserService } from 'app-services';
-import { AddCustomerComponent } from './add-customer/add-customer.component';
-import { UserProfileComponent } from 'app-components';
+import { CustomerService } from 'app-services';
+import { AddCustomerPopupComponent } from './add-customer-popup/add-customer-popup.component';
 
 
 @Component({
@@ -27,7 +26,10 @@ export class CustomersPage implements OnInit, OnDestroy {
 		private router: Router,
 		private platform: Platform,
 		private modalCtrl: ModalController,
-		private userService: UserService,
+		private customerService: CustomerService,
+		private toastCtrl: ToastController,
+		private alertCtrl: AlertController,
+		private loadingCtrl: LoadingController,
 	) {
 		this.platforms = this.platform.platforms();
 		this.isDesktop = this.platforms.includes('desktop');
@@ -37,10 +39,11 @@ export class CustomersPage implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.customerTableCols = [
 			{ header: 'Image' },
-			{ field: 'customerName', header: 'Name' },
-			{ field: 'mobileNumber', header: 'Mobile Number' },
-			{ field: 'address', header: 'Address' },
-			{ field: 'isActive', header: 'Active' },
+			{ field: 'full_name', header: 'Full Name' },
+			{ field: 'display_name', header: 'Display Name' },
+			{ field: 'phone', header: 'Mobile' },
+			{ field: 'joined_date', header: 'Joined on' },
+			{ field: 'updated_date', header: 'Updated on' },
 			{ header: 'Actions' }
 		];
 	}
@@ -56,58 +59,114 @@ export class CustomersPage implements OnInit, OnDestroy {
     }
 
 	getCustomers() {
-		const getCustomersSub = this.userService.getCustomerList().subscribe(
-            (response: any) => {
-                this.customers = response;
-            },
-        );
-        this.subscriptions.push(getCustomersSub);
+		this.loadingCtrl.create({
+			message: "Loading data",
+		}).then((loadingEl: HTMLIonLoadingElement) => {
+			loadingEl.present();
+			const getCustomersSub = this.customerService.getCustomers().subscribe(
+				(response: any) => {
+					this.customers = this.reArrangeCustomerList(response);
+					loadingEl.dismiss();
+				},
+				error => {
+					loadingEl.dismiss();
+				}
+			);
+			this.subscriptions.push(getCustomersSub);
+		})
+	}
+
+	reArrangeCustomerList(data: any) {
+		const customers = [];
+		for (const key in data) {
+			customers.push({...data[key], _id: key});
+		}
+		return customers;
 	}
 
 	onFilterCustomers() {}
 
 	goToCustomerDetails(customerId: any, slidingItem?: IonItemSliding) {
-		if (slidingItem) {
-			slidingItem.close();
-		}
+		if (slidingItem) slidingItem.close();
 		this.router.navigate(['/customers', customerId]);
 	}
 
 	addCustomer() {
-		this.modalCtrl.create({
-			component: AddCustomerComponent,
-			id: 'customer-add-modal'
-		}).then((modalEl: HTMLIonModalElement) => {
-			modalEl.present();
-			return modalEl.onDidDismiss();
-		}).then((resultData: any) => {
-			if (resultData && resultData.role === 'confirm') {
-				this.getCustomers();
-			}
-		});
+		this.openCustomerPopup("add");
     }
 
     onEditCustomer(customerData: any, slidingItem?: IonItemSliding) {
         if (!customerData) { return; }
-		if (slidingItem) {
-			slidingItem.close();
-		}
-		this.modalCtrl.create({
-            component: UserProfileComponent,
+		if (slidingItem) slidingItem.close();
+		this.openCustomerPopup("update", customerData);
+    }
+
+	openCustomerPopup(type: string, customerData?: any) {
+        this.modalCtrl.create({
+            component:  AddCustomerPopupComponent,
             componentProps: {
-                userList: this.customers ? this.customers : [],
-                operationType: 'update',
-                loadedUser: customerData,
+                customerList: this.customers ? this.customers : [],
+                operationType: type,
+                customerData: customerData,
             },
-            id: 'user-profile-modal'
+            id: 'customer-add-popup-modal',
         }).then((modalEl: HTMLIonModalElement) => {
             modalEl.present();
-            return modalEl.onDidDismiss() ;
+            return modalEl.onDidDismiss();
         }).then((resultData: any) => {
             if (resultData.role === "confirm" && resultData.data) {
                 this.getCustomers();
             }
         });
+    }
+
+	onDeleteCustomer(id: string, slidingItem?: IonItemSliding) {
+        if (slidingItem) slidingItem.close();
+        this.alertCtrl.create({
+            header: 'Are you sure?',
+            message: 'Customer data will be deleted permanently.',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                },
+                {
+                    text: 'Delete',
+                    role: "confirm",
+                },
+            ],
+        }).then((alertEl: HTMLIonAlertElement) => {
+            alertEl.present();
+            return alertEl.onDidDismiss();
+        }).then((alertResult: any) => {
+            if (alertResult && alertResult.role === "confirm") {
+                this.loadingCtrl.create({
+                    message: "Deleting customer data",
+                }).then(loadingEl => {
+                    loadingEl.present();
+                    const deleteEmpSub = this.customerService.deleteCustomer(id).subscribe(
+                        (response: any) => {
+                            loadingEl.dismiss();
+                            this.showToast("Customer data is deleted successfully!");
+                            this.getCustomers();
+                        },
+                        errorRes => {
+                            loadingEl.dismiss();
+                        }
+                    );
+                    this.subscriptions.push(deleteEmpSub);
+                });
+            }
+        });
+    }
+
+	async showToast(message: string) {
+        const toast = await this.toastCtrl.create({
+            message: message,
+            duration: 2000,
+            position: "top"
+        });
+        toast.present();
     }
 
 }

@@ -43,15 +43,15 @@ export class CustomerDetailPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.customerService.customers.subscribe((list: any[]) => {
-            this.customerList = list;
-            if (list && list.length > 0) {
-                this.customerData = list.find((e: any) => e.id === this.customerId);
-                this.customerProfile = this.customerData ? this.customerData.profile : null;
-            } else if (!this.getCustomerDataSub) {
-                this.getCustomerDetails();
-            }
-        });
+        // this.customerService.customers.subscribe((list: any[]) => {
+        //     this.customerList = list;
+        //     if (list && list.length > 0) {
+        //         this.customerData = list.find((e: any) => e.id === this.customerId);
+        //         this.customerProfile = this.customerData ? this.customerData.profile : null;
+        //     } else if (!this.getCustomerDataSub) {
+        //         this.getCustomerDetails();
+        //     }
+        // });
     }
 
     getCustomerDetails() {

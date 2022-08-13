@@ -36,23 +36,28 @@
 						Edit
 					</ion-item-option>
 				</ion-item-options>
-				<ion-item (click)="goToCustomerDetails(customer.id, slidingItem)"
+				<ion-item-options side="end">
+					<ion-item-option color="danger" (click)="onDeleteCustomer(customer._id, slidingItem)">
+						<ion-icon slot="top" name="trash"></ion-icon>
+						Delete
+					</ion-item-option>
+				</ion-item-options>
+				<ion-item (click)="goToCustomerDetails(customer._id, slidingItem)"
 					lines="none" detail button>
 					<ion-avatar slot="start">
 						<img src="./assets/images/man.png"
-							*ngIf="customer.profile && customer.profile.gender === 'male'">
+							*ngIf="customer.gender && customer.gender === 'male'">
 						<img src="./assets/images/woman.png"
-							*ngIf="!customer.profile || customer.profile.gender === 'female'">
+							*ngIf="!customer.gender || customer.gender === 'female'">
 					</ion-avatar>
 					<ion-label>
-						<ng-container *ngIf="!customer.profile">
-							<h3>{{customer.username}}</h3>
-							<span>{{customer.email}}</span>
-						</ng-container>
-						<ng-container *ngIf="customer?.profile">
-							<h3>{{customer.profile.display_name ? customer.profile.display_name : customer.profile.full_name}}</h3>
-							<span>{{customer.profile.phone}}</span>
-						</ng-container>
+						<h3 class="customer-name" *ngIf="customer.display_name; else fullName">
+							{{customer.display_name | titlecase}}
+						</h3>
+						<ng-template #fullName>
+							<h3 class="customer-name">{{customer.full_name | titlecase}}</h3>
+						</ng-template>
+						<span class="f-14">{{customer.phone}}</span>
 					</ion-label>
 				</ion-item>
 			</ion-item-sliding>
@@ -91,35 +96,34 @@
 										<td>
 											<ion-avatar slot="start">
 												<img src="./assets/images/man.png"
-													*ngIf="data.profile && data.profile.gender === 'male'">
+													*ngIf="data.gender && data.gender === 'male'">
 												<img src="./assets/images/woman.png"
-													*ngIf="!data.profile || data.profile.gender === 'female'">
+													*ngIf="!data.gender || data.gender === 'female'">
 											</ion-avatar>
 										</td>
 										<td>
-											<ng-container *ngIf="data.profile; else userName">
-												<ng-container *ngIf="data.profile.display_name; else fullName">
-													{{data.profile.display_name | titlecase}}
-												</ng-container>
-												<ng-template #fullName>{{data.profile.full_name | titlecase}}</ng-template>
-											</ng-container>
-											<ng-template #userName>{{data.username | titlecase}}</ng-template>
+											<a class="f-600" (click)="goToCustomerDetails(data._id)">{{data.full_name | titlecase}}</a>
 										</td>
 										<td>
-											<ng-container *ngIf="data.profile">
-												{{data.profile.phone}}
-											</ng-container>
+											<span>{{data.display_name | titlecase}}</span>
 										</td>
 										<td>
-											<ng-container *ngIf="data.profile">
-												{{data.profile.address}}
-											</ng-container>
+											<span>{{data.phone ? data.phone : '-'}}</span>
 										</td>
-										<td>{{data.is_active ? 'Active' : 'Inactive'}}</td>
+										<td>
+											<span>{{data.joined_date | date}}</span>
+										</td>
+										<td>
+											<span>{{data.updated_date | date}}</span>
+										</td>
 										<td>
 											<ion-button (click)="onEditCustomer(data)"
 												slot="icon-only" fill="clear" color="medium">
 												<ion-icon name="create"></ion-icon>
+											</ion-button>
+											<ion-button (click)="onDeleteCustomer(data._id)"
+												slot="icon-only" fill="clear" color="medium">
+												<ion-icon name="trash"></ion-icon>
 											</ion-button>
 										</td>
 									</tr>
