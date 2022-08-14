@@ -16,37 +16,47 @@ const routes: Routes = [
       {
         path: 'home',
         loadChildren: () => import('./feature/home/home.module').then( m => m.HomePageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
       },
       {
         path: 'dashboard',
         loadChildren: () => import('./feature/dashboard/dashboard.module').then( m => m.DashboardPageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
       },
       {
         path: 'customers',
         loadChildren: () => import('./feature/customers/customers.module').then( m => m.CustomersPageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
       },
       {
         path: 'emp',
         loadChildren: () => import('./feature/employee/employee.module').then( m => m.EmployeePageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
       },
       {
         path: 'orders',
         loadChildren: () => import('./feature/orders/orders.module').then( m => m.OrdersPageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
       },
       {
         path: 'account',
         loadChildren: () => import('./feature/account/account.module').then( m => m.AccountPageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
       },
       {
         path: 'requests',
         loadChildren: () => import('./feature/requests/requests.module').then( m => m.RequestsPageModule),
-        canLoad: [AuthGuard]
+        // canLoad: [AuthGuard]
+      },
+      {
+        path: 'products',
+        loadChildren: () => import('./feature/products/products.module').then( m => m.ProductsPageModule),
+        // canLoad: [AuthGuard]
+      },
+      {
+        path: 'services',
+        loadChildren: () => import('./feature/services/services.module').then( m => m.ServicesPageModule),
+        // canLoad: [AuthGuard]
       },
       {
         path: '',

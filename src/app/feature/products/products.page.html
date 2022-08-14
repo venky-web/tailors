@@ -1,0 +1,127 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Products</ion-title>
+        <ion-buttons slot="end" *ngIf="!isDesktop">
+            <ion-button (click)="addProduct()" slot="icon-only" color="primary">
+                <ion-icon name="add-circle-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ng-container *ngIf="!isDesktop; else productTable">
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button (click)="addProduct()">
+                <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+        <div class="search-section">
+            <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+            <div class="filter-section">
+                <ion-button (click)="onFilterProducts()" fill="clear"
+                    slot="icon-only">
+                    <ion-icon name="filter"></ion-icon>
+                </ion-button>
+            </div>
+        </div>
+        <ion-list class="product-list">
+            <ion-item-sliding *ngFor="let product of productList" #slidingItem>
+                <ion-item-options side="start">
+                    <ion-item-option color="primary" (click)="onEditProduct(product, slidingItem)">
+                        <ion-icon slot="top" name="create"></ion-icon>
+                        Edit
+                    </ion-item-option>
+                </ion-item-options>
+                <ion-item-options side="end">
+                    <ion-item-option color="danger" (click)="onDeleteProduct(product._id, slidingItem)">
+                        <ion-icon slot="top" name="trash"></ion-icon>
+                        Delete
+                    </ion-item-option>
+                </ion-item-options>
+                <ion-item (click)="goToProductDetails(product._id, slidingItem)"
+                    lines="none" detail button>
+                    <ion-label>
+                        <section class="product-item">
+                            <h3 class="product-name">{{product.name | titlecase}}</h3>
+                            <span class="f-14 description">{{product.description}}</span>
+                            <span class="f-14 price">{{product.price | currency:"INR"}}</span>
+                            <span class="f-14 discount" *ngIf="product?.discount">{{product.discount}}%</span>
+                        </section>
+                    </ion-label>
+                </ion-item>
+            </ion-item-sliding>
+        </ion-list>
+    </ng-container>
+</ion-content>
+
+<ng-template #productTable>
+    <div class="main-content">
+        <div class="left-section">
+            <ion-grid>
+                <ion-row class="border-bottom ion-align-items-center">
+                    <ion-col size="3">
+                        <h4 class="ion-no-margin">Products</h4>
+                    </ion-col>
+                    <ion-col size="6" class="ion-text-center ion-no-padding">
+                        <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+                    </ion-col>
+                    <ion-col size="3" class="ion-text-end">
+                        <ion-button (click)="addProduct()" fill="solid">
+                            <ion-icon name="add-circle-outline"></ion-icon> 
+                            Add Product
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col size="12">
+                        <p-table [columns]="productTableCols" [value]="productList"
+                            [paginator]="true" [rows]="10">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr>
+                                    <td>
+                                        <a class="f-600" (click)="goToProductDetails(data._id)">{{data.name | titlecase}}</a>
+                                    </td>
+                                    <td>
+                                        <span>{{data.description}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.price| currency:"INR"}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.purchase_date | date}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.discount}}%</span>
+                                    </td>
+                                    <td>
+                                        <ion-button (click)="onEditProduct(data)"
+                                            slot="icon-only" fill="clear" color="medium">
+                                            <ion-icon name="create"></ion-icon>
+                                        </ion-button>
+                                        <ion-button (click)="onDeleteProduct(data._id)"
+                                            slot="icon-only" fill="clear" color="medium">
+                                            <ion-icon name="trash"></ion-icon>
+                                        </ion-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+        <div class="right-section overview-section">
+        </div>
+    </div>
+</ng-template>

@@ -30,15 +30,15 @@ export class HomePage implements OnInit, AfterViewInit {
         if (userDetails) {
             this.features.forEach((x: FeatureCard) => {
                 if (x.name === "Customers" || x.name === "Employees") {
-                    x.hasAccess = userDetails.user_role === "business_admin" ||
-                        userDetails.user_role === "business_staff";
+                    // x.hasAccess = userDetails.user_role === "business_admin" ||
+                    //     userDetails.user_role === "business_staff";
+                    x.hasAccess = true;
                 }
             });
         }
     }
 
     onClickTile(routeUrl: string) {
-        console.log(routeUrl);
         this.router.navigateByUrl(routeUrl);
     }
 

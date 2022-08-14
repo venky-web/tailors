@@ -7,12 +7,12 @@ export interface FeatureCard {
 }
 
 export const FEATURES_LIST: FeatureCard[] = [
-    // {
-    //     name: 'Orders',
-    //     iconUrl: './assets/app-icons/orders.png',
-    //     routeUrl: '/orders',
-    //     hasAccess: true,
-    // },
+    {
+        name: 'Orders',
+        iconUrl: './assets/app-icons/orders.png',
+        routeUrl: '/orders',
+        hasAccess: true,
+    },
     // {
     //     name: 'Reports',
     //     iconUrl: './assets/app-icons/reports.png',
@@ -30,15 +30,28 @@ export const FEATURES_LIST: FeatureCard[] = [
         routeUrl: '/emp',
         hasAccess: true,
     },
+    {
+        name: 'Vendors',
+        iconUrl: './assets/app-icons/suppliers.png',
+        routeUrl: '/vendors',
+        hasAccess: true,
+    },
     // {
-    //     name: 'Vendors',
-    //     iconUrl: './assets/app-icons/suppliers.png',
-    //     routeUrl: '/vendors'
+    //     name: 'Requests',
+    //     iconUrl: './assets/app-icons/add-user.png',
+    //     routeUrl: '/requests',
+    //     hasAccess: true,
     // },
     {
-        name: 'Requests',
-        iconUrl: './assets/app-icons/add-user.png',
-        routeUrl: '/requests',
+        name: 'Products',
+        iconUrl: './assets/app-icons/dress.png',
+        routeUrl: '/products',
+        hasAccess: true,
+    },
+    {
+        name: 'Services',
+        iconUrl: './assets/app-icons/sewing.png',
+        routeUrl: '/services',
         hasAccess: true,
     },
 ];
