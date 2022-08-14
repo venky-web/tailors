@@ -51,4 +51,36 @@ export class ProductService {
 		);
     }
 
+    getServiceItems() {
+		return this.http.get(`${this.env.fireBaseAPI}services.json`);
+	}
+
+    addServiceItem(newServiceItem: any) {
+        return this.http.post(`${this.env.fireBaseAPI}services.json`, newServiceItem)
+		.pipe(
+			take(1)
+		);
+    }
+
+	getServiceItem(id: string) {
+		return this.http.get(`${this.env.fireBaseAPI}services/${id}.json`)
+		.pipe(
+			take(1)
+		);
+	}
+
+    updateServiceItem(serviceData: any, id: string) {
+        return this.http.put(`${this.env.fireBaseAPI}services/${id}.json`, serviceData)
+		.pipe(
+			take(1)
+		);
+    }
+
+    deleteServiceItem(id: string) {
+        return this.http.delete(`${this.env.fireBaseAPI}services/${id}.json`)
+		.pipe(
+			take(1)
+		);
+    }
+
 }

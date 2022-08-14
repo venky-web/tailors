@@ -1,0 +1,124 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button defaultHref="home"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Services</ion-title>
+      <ion-buttons slot="end" *ngIf="!isDesktop">
+          <ion-button (click)="addServiceItem()" slot="icon-only" color="primary">
+              <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="!isDesktop; else serviceItemsTable">
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+          <ion-fab-button (click)="addServiceItem()">
+              <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+      </ion-fab>
+      <div class="search-section">
+          <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+          <div class="filter-section">
+              <ion-button (click)="onFilterServiceItems()" fill="clear"
+                  slot="icon-only">
+                  <ion-icon name="filter"></ion-icon>
+              </ion-button>
+          </div>
+      </div>
+      <ion-list class="service-list">
+          <ion-item-sliding *ngFor="let service of serviceList" #slidingItem>
+              <ion-item-options side="start">
+                  <ion-item-option color="primary" (click)="onEditServiceItem(service, slidingItem)">
+                      <ion-icon slot="top" name="create"></ion-icon>
+                      Edit
+                  </ion-item-option>
+              </ion-item-options>
+              <ion-item-options side="end">
+                  <ion-item-option color="danger" (click)="onDeleteServiceItem(service._id, slidingItem)">
+                      <ion-icon slot="top" name="trash"></ion-icon>
+                      Delete
+                  </ion-item-option>
+              </ion-item-options>
+              <ion-item (click)="goToServiceDetails(service._id, slidingItem)"
+                  lines="none" detail button>
+                  <ion-label>
+                      <section class="service-item">
+                          <h3 class="service-name">{{service.name | titlecase}}</h3>
+                          <span class="f-14 description">{{service.description}}</span>
+                          <span class="f-14 price">{{service.price | currency:"INR"}}</span>
+                          <span class="f-14 discount" *ngIf="service?.discount">{{service.discount}}%</span>
+                      </section>
+                  </ion-label>
+              </ion-item>
+          </ion-item-sliding>
+      </ion-list>
+  </ng-container>
+</ion-content>
+
+<ng-template #serviceItemsTable>
+  <div class="main-content">
+      <div class="left-section">
+          <ion-grid>
+              <ion-row class="border-bottom ion-align-items-center">
+                  <ion-col size="3">
+                      <h4 class="ion-no-margin">Services</h4>
+                  </ion-col>
+                  <ion-col size="6" class="ion-text-center ion-no-padding">
+                      <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+                  </ion-col>
+                  <ion-col size="3" class="ion-text-end">
+                      <ion-button (click)="addServiceItem()" fill="solid">
+                          <ion-icon name="add-circle-outline"></ion-icon> 
+                          Add Service
+                      </ion-button>
+                  </ion-col>
+              </ion-row>
+              <ion-row>
+                  <ion-col size="12">
+                      <p-table [columns]="serviceTableCols" [value]="serviceList"
+                          [paginator]="true" [rows]="10">
+                          <ng-template pTemplate="header" let-columns>
+                              <tr>
+                                  <th *ngFor="let col of columns">
+                                      {{col.header}}
+                                  </th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-data let-columns="columns">
+                              <tr>
+                                  <td>
+                                      <a class="f-600" (click)="goToServiceDetails(data._id)">{{data.name | titlecase}}</a>
+                                  </td>
+                                  <td class="service-description">
+                                      <span>{{data.description}}</span>
+                                  </td>
+                                  <td>
+                                      <span>{{data.price| currency:"INR"}}</span>
+                                  </td>
+                                  <td>
+                                      <span>{{data.discount}}%</span>
+                                  </td>
+                                  <td>
+                                      <ion-button (click)="onEditServiceItem(data)"
+                                          slot="icon-only" fill="clear" color="medium">
+                                          <ion-icon name="create"></ion-icon>
+                                      </ion-button>
+                                      <ion-button (click)="onDeleteServiceItem(data._id)"
+                                          slot="icon-only" fill="clear" color="medium">
+                                          <ion-icon name="trash"></ion-icon>
+                                      </ion-button>
+                                  </td>
+                              </tr>
+                          </ng-template>
+                      </p-table>
+                  </ion-col>
+              </ion-row>
+          </ion-grid>
+      </div>
+      <div class="right-section overview-section">
+      </div>
+  </div>
+</ng-template>

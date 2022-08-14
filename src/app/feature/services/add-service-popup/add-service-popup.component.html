@@ -1,0 +1,96 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>{{operationType === 'add' ? 'Add' : 'Update'}} Service</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button color="danger" (click)="onCancel()">
+                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <form [formGroup]="serviceForm" class="emp-form-section">
+        <ion-list lines="full" class="mb-3">
+            <ion-item lines="full">
+                <ion-label position="floating">Name</ion-label>
+                <ion-input clearInput name="name" formControlName="name" 
+                    placeholder="Enter product name">
+                </ion-input>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.name.errors &&
+                (formCtrls.name.touched || formCtrls.name.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.name.errors.required"></ng-template>
+                <div class="error-msg" *ngIf="formCtrls.name.errors.minlength">
+                    Name should be minimum 1 characters
+                </div>
+                <div class="error-msg" *ngIf="formCtrls.name.errors.maxlength">
+                    Name should not be more than 100 characters
+                </div>
+            </ng-container>
+            <div class="error-msg" *ngIf="duplicateName">
+                Name already exists. Please try different name.
+            </div>
+            <ion-item lines="full">
+                <ion-label position="floating">Price</ion-label>
+                <ion-input clearInput type="number" name="price" formControlName="price" 
+                    inputmode="numeric" placeholder="Enter price">
+                </ion-input>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.price.errors &&
+                (formCtrls.price.touched || formCtrls.price.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.price.errors.required"
+                ></ng-template>
+                <div class="error-msg" *ngIf="formCtrls.price.errors.min">
+                    Price cannot be less than 0
+                </div>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Discount</ion-label>
+                <ion-input clearInput type="number" name="discount" formControlName="discount" 
+                    inputmode="numeric" placeholder="Enter discount">
+                </ion-input>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.discount.errors &&
+                (formCtrls.discount.touched || formCtrls.discount.dirty)">
+                <ng-template [ngTemplateOutlet]="fieldRequriedText"
+                    *ngIf="formCtrls.discount.errors.required"
+                ></ng-template>
+                <div class="error-msg" *ngIf="formCtrls.discount.errors.min">
+                    Discount cannot be less than 0
+                </div>
+            </ng-container>
+            <ion-item lines="full">
+                <ion-label position="floating">Description (optional)</ion-label>
+                <ion-textarea rows="2" placeholder="Enter description"
+                    name="description" formControlName="description"
+                ></ion-textarea>
+            </ion-item>
+            <ng-container *ngIf="formCtrls.description.errors &&
+                (formCtrls.description.touched || formCtrls.description.dirty)">
+                <div class="error-msg" *ngIf="formCtrls.description.errors.maxlength">
+                    Description cannot exceed 200 characters
+                </div>
+            </ng-container>
+        </ion-list>
+    </form>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+        <div class="profile-btn-section">
+            <ion-button (click)="onCancel()" color="danger" shape="round" fill="clear" >
+                Cancel
+            </ion-button>
+            <ion-button (click)="saveServiceItemData()" shape="round" fill="solid" >
+                Save
+            </ion-button>
+        </div>
+    </ion-toolbar>
+</ion-footer>
+
+<ng-template #fieldRequriedText>
+    <div class="error-msg">This field is required</div>
+</ng-template>

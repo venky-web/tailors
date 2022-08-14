@@ -1,4 +1,4 @@
-.product-list {
+.service-list {
     padding: 8px;
 
 	ion-item-sliding {
@@ -11,7 +11,7 @@
 			color: var(--text-black);
 		}
 
-        .product-item {
+        .service-item {
             display: grid;
             grid-template-areas: "name price"
                                  "description discount";
@@ -19,7 +19,7 @@
             gap: 0.5rem;
             padding-top: 8px;
         
-            .product-name {
+            .service-name {
                 grid-area: name;
                 font-weight: 600;
                 font-size: 1.2rem;
@@ -83,7 +83,7 @@
             height: 32px;
         }
 
-        .product-description {
+        .service-description {
            width: 25%;
            white-space: wrap;
         }
