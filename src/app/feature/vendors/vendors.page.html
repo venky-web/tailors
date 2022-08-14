@@ -1,0 +1,122 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Vendors</ion-title>
+        <ion-buttons slot="end" *ngIf="!isDesktop">
+            <ion-button (click)="addVendor()" slot="icon-only" color="primary">
+                <ion-icon name="add-circle-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ng-container *ngIf="!isDesktop; else vendorTable">
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button (click)="addVendor()">
+                <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+        <div class="search-section">
+            <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+            <div class="filter-section">
+                <ion-button (click)="onFilterVendors()" fill="clear"
+                    slot="icon-only">
+                    <ion-icon name="filter"></ion-icon>
+                </ion-button>
+            </div>
+        </div>
+        <ion-list class="vendor-list">
+            <ion-item-sliding *ngFor="let vendor of vendorList" #slidingItem>
+                <ion-item-options side="start">
+                    <ion-item-option color="primary" (click)="onEditVendor(vendor, slidingItem)">
+                        <ion-icon slot="top" name="create"></ion-icon>
+                        Edit
+                    </ion-item-option>
+                </ion-item-options>
+                <ion-item-options side="end">
+                    <ion-item-option color="danger" (click)="onDeleteVendor(vendor._id, slidingItem)">
+                        <ion-icon slot="top" name="trash"></ion-icon>
+                        Delete
+                    </ion-item-option>
+                </ion-item-options>
+                <ion-item (click)="goToVendorDetails(vendor._id, slidingItem)"
+                    lines="none" detail button>
+                    <ion-label>
+                        <section class="vendor-item">
+                            <h3 class="vendor-name">{{vendor.name | titlecase}}</h3>
+                            <span class="f-14 description">{{vendor.phone ? vendor.phone : "-"}}</span>
+                        </section>
+                    </ion-label>
+                </ion-item>
+            </ion-item-sliding>
+        </ion-list>
+    </ng-container>
+</ion-content>
+
+<ng-template #vendorTable>
+    <div class="main-content">
+        <div class="left-section">
+            <ion-grid>
+                <ion-row class="border-bottom ion-align-items-center">
+                    <ion-col size="3">
+                        <h4 class="ion-no-margin">Vendors</h4>
+                    </ion-col>
+                    <ion-col size="6" class="ion-text-center ion-no-padding">
+                        <ion-searchbar id="searchBar1" mode="ios"></ion-searchbar>
+                    </ion-col>
+                    <ion-col size="3" class="ion-text-end">
+                        <ion-button (click)="addVendor()" fill="solid">
+                            <ion-icon name="add-circle-outline"></ion-icon> 
+                            Add Vendor
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col size="12">
+                        <p-table [columns]="vendorTableCols" [value]="vendorList"
+                            [paginator]="true" [rows]="10">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-data let-columns="columns">
+                                <tr>
+                                    <td>
+                                        <a class="f-600" (click)="goToVendorDetails(data._id)">{{data.name | titlecase}}</a>
+                                    </td>
+                                    <td class="service-description">
+                                        <span>{{data.description ? data.description : "-"}}</span>
+                                    </td>
+                                    <td class="service-description">
+                                        <span>{{data.address ? data.address : "-"}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{data.phone ? data.phone : "-"}}</span>
+                                    </td>
+                                    <td>
+                                        <ion-button (click)="onEditVendor(data)"
+                                            slot="icon-only" fill="clear" color="medium">
+                                            <ion-icon name="create"></ion-icon>
+                                        </ion-button>
+                                        <ion-button (click)="onDeleteVendor(data._id)"
+                                            slot="icon-only" fill="clear" color="medium">
+                                            <ion-icon name="trash"></ion-icon>
+                                        </ion-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+        <div class="right-section overview-section">
+        </div>
+    </div>
+</ng-template>

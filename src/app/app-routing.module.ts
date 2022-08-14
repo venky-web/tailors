@@ -59,6 +59,11 @@ const routes: Routes = [
         // canLoad: [AuthGuard]
       },
       {
+        path: 'vendors',
+        loadChildren: () => import('./feature/vendors/vendors.module').then( m => m.VendorsPageModule),
+        // canLoad: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full'

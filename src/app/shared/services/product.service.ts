@@ -83,4 +83,36 @@ export class ProductService {
 		);
     }
 
+	getVendors() {
+		return this.http.get(`${this.env.fireBaseAPI}vendors.json`);
+	}
+
+    addVendor(vendorData: any) {
+        return this.http.post(`${this.env.fireBaseAPI}vendors.json`, vendorData)
+		.pipe(
+			take(1)
+		);
+    }
+
+	getVendorDetails(id: string) {
+		return this.http.get(`${this.env.fireBaseAPI}vendors/${id}.json`)
+		.pipe(
+			take(1)
+		);
+	}
+
+    updateVendor(vendorData: any, id: string) {
+        return this.http.put(`${this.env.fireBaseAPI}vendors/${id}.json`, vendorData)
+		.pipe(
+			take(1)
+		);
+    }
+
+    deleteVendor(id: string) {
+        return this.http.delete(`${this.env.fireBaseAPI}vendors/${id}.json`)
+		.pipe(
+			take(1)
+		);
+    }
+
 }

@@ -41,7 +41,7 @@ export class AddEmployeePopupComponent implements OnInit, OnDestroy {
                 fullName: this.employeeData.full_name,
                 displayName: this.employeeData.display_name,
                 gender: this.employeeData.gender,
-                mobileNumber: this.employeeData.phone
+                phone: this.employeeData.phone
             });
         }
     }
@@ -63,7 +63,7 @@ export class AddEmployeePopupComponent implements OnInit, OnDestroy {
                 validators: [Validators.minLength(3), Validators.maxLength(120)]
             }),
             gender: new FormControl('female', {updateOn: 'blur', validators: [Validators.required]}),
-            mobileNumber: new FormControl(null, {
+            phone: new FormControl(null, {
                 updateOn: 'blur',
                 validators: [
                     Validators.required,
@@ -96,7 +96,7 @@ export class AddEmployeePopupComponent implements OnInit, OnDestroy {
                     x._id !== this.employeeData._id
                 );
                 duplicateEmployeeWithPhone = this.employeeList.find((x: any) =>
-                    x.phone === `${formData.mobileNumber}` &&
+                    x.phone === `${formData.phone}` &&
                     x._id !== this.employeeData._id
                 );
             } else {
@@ -104,7 +104,7 @@ export class AddEmployeePopupComponent implements OnInit, OnDestroy {
                     x.full_name &&
                     x.full_name.toLowerCase() === formData.fullName.toLowerCase()
                 );
-                duplicateEmployeeWithPhone = this.employeeList.find((x: any) => x.phone === `${formData.mobileNumber}`);
+                duplicateEmployeeWithPhone = this.employeeList.find((x: any) => x.phone === `${formData.phone}`);
             }
             this.duplicateName = !!duplicateEmployeeWithName;
             this.duplicateNumber = !!duplicateEmployeeWithPhone;
@@ -122,7 +122,7 @@ export class AddEmployeePopupComponent implements OnInit, OnDestroy {
             "employee_id": "EM" + this.getEmployeeId(),
             "full_name": formData.fullName,
             "display_name": formData.displayName,
-            "phone": `${formData.mobileNumber}`,
+            "phone": formData.phone ? `${formData.phone}` : "",
             "joined_date": moment(new Date()).format("YYYY-MM-DD"),
             "gender": formData.gender,
             "created_date": moment(new Date()).format("YYYY-MM-DD HH:mm:ssZ"),
@@ -157,7 +157,7 @@ export class AddEmployeePopupComponent implements OnInit, OnDestroy {
             "employee_id": this.employeeData.employee_id,
             "full_name": formData.fullName,
             "display_name": formData.displayName,
-            "phone": `${formData.mobileNumber}`,
+            "phone": formData.phone ? `${formData.phone}` : "",
             "joined_date": this.employeeData.joined_date,
             "gender": formData.gender,
             "created_date": this.employeeData.created_date,

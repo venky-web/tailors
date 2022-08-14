@@ -61,19 +61,19 @@
                     *ngIf="formCtrls.gender.errors.required"></ng-template>
             </ng-container>
             <ion-item lines="full">
-                <ion-label position="floating">Mobile Number</ion-label>
-                <ion-input clearInput type="number" name="mobileNumber" formControlName="mobileNumber" 
+                <ion-label position="floating">Contact Number</ion-label>
+                <ion-input clearInput type="number" name="phone" formControlName="phone" 
                     inputmode="numeric" placeholder="Enter mobile number">
                 </ion-input>
             </ion-item>
-            <ng-container *ngIf="formCtrls.mobileNumber.errors &&
-                (formCtrls.mobileNumber.touched || formCtrls.mobileNumber.dirty)">
+            <ng-container *ngIf="formCtrls.phone.errors &&
+                (formCtrls.phone.touched || formCtrls.phone.dirty)">
                 <ng-template [ngTemplateOutlet]="fieldRequriedText"
-                    *ngIf="formCtrls.mobileNumber.errors.required"></ng-template>
-                <div class="error-msg" *ngIf="formCtrls.mobileNumber.errors.pattern">
+                    *ngIf="formCtrls.phone.errors.required"></ng-template>
+                <div class="error-msg" *ngIf="formCtrls.phone.errors.pattern">
                     Invalid mobile number
                 </div>
-                <div class="error-msg" *ngIf="formCtrls.mobileNumber.errors.minlength || formCtrls.mobileNumber.errors.maxlength">
+                <div class="error-msg" *ngIf="formCtrls.phone.errors.minlength || formCtrls.phone.errors.maxlength">
                     Mobile number should be 10 characters
                 </div>
             </ng-container>
